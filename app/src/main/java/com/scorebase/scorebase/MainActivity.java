@@ -59,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
             public void onSuccess(Uri uri) {
                 try {
                     // git test
+                    // yes it's work
                     image_bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
                 } catch (IOException e) {
                     e.printStackTrace();
