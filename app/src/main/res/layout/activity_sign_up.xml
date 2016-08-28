@@ -1,40 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="#81d4fa"
+    android:background="@color/backgroundDark"
     android:orientation="vertical">
 
     <ImageView
-        android:layout_width="128dp"
-        android:layout_height="128dp"
+        android:layout_width="@dimen/width_logo"
+        android:layout_height="@dimen/width_logo"
         android:layout_gravity="center_horizontal"
         android:src="@drawable/logo" />
 
     <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp">
+        android:layout_margin="@dimen/margin_sign_edit_text">
 
         <EditText
             android:id="@+id/edit_text_email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Email"
+            android:hint="@string/sign_email"
             android:inputType="textEmailAddress" />
     </android.support.design.widget.TextInputLayout>
 
     <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp">
+        android:layout_margin="@dimen/margin_sign_edit_text">
 
         <EditText
             android:id="@+id/edit_text_password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Password"
+            android:hint="@string/sign_password"
             android:inputType="textPassword" />
     </android.support.design.widget.TextInputLayout>
 
@@ -42,18 +42,18 @@
         android:id="@+id/button_sign_up"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
+        android:layout_margin="@dimen/margin_sign_button"
         android:background="@color/colorAccent"
-        android:text="REGISTER"
+        android:text="@string/sign_register"
         android:textColor="@android:color/white" />
 
     <Button
         android:id="@+id/button_password"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
+        android:layout_margin="@dimen/margin_sign_button"
         android:background="@null"
-        android:text="Forgot your password?"
+        android:text="@string/sign_go_to_forgot_password"
         android:textAllCaps="false"
         android:textColor="@color/colorAccent" />
 
@@ -61,21 +61,20 @@
         android:id="@+id/button_sign_in"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
+        android:layout_margin="@dimen/margin_sign_button"
         android:background="@null"
-        android:text="Already registered. Login Me!"
+        android:text="@string/sign_go_to_sign_in"
         android:textAllCaps="false"
         android:textColor="@color/colorAccent" />
 
     <me.zhanghai.android.materialprogressbar.MaterialProgressBar
         android:id="@+id/progressbar"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
+        style="@style/Widget.MaterialProgressBar.ProgressBar"
+        android:layout_width="@dimen/width_progressbar"
+        android:layout_height="@dimen/height_progressbar"
         android:layout_gravity="center|bottom"
-        android:layout_marginBottom="20dp"
         android:indeterminate="true"
         android:visibility="gone"
-        app:mpb_progressStyle="circular"
-        style="@style/Widget.MaterialProgressBar.ProgressBar"/>
+        app:mpb_progressStyle="circular" />
 
 </LinearLayout>

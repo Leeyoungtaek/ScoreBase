@@ -1,3 +1,15 @@
 <resources>
     <string name="app_name">Scorebase</string>
+    <string name="sign_email">Email</string>
+    <string name="sign_password">Password</string>
+    <string name="sign_singin">Sign In</string>
+    <string name="sign_register">Register</string>
+    <string name="sign_go_to_forgot_password">Forgot your password?</string>
+    <string name="sign_go_to_register">Not a member? Get registered now!</string>
+    <string name="sign_go_to_sign_in">Already registered. Sign In!</string>
+    <string name="sign_forgot_password_title">Forgot password?</string>
+    <string name="sign_reset_password_title">패스워드가 기억이 안난다면 아래에 이메일을 적고 새로운 비밀번호를 설정하세요!</string>
+    <string name="sign_reset_password">Reset Password</string>
+    <string name="sign_back_button">BACK</string>
+    <string name="my_information_upload_button">Upload Image</string>
 </resources>

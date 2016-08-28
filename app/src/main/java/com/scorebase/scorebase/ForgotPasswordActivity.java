@@ -61,6 +61,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
                             public void onComplete(@NonNull Task<Void> task) {
                                 if(task.isSuccessful()){
                                     Toast.makeText(getApplicationContext(), "이메일을 확인해주세요!", Toast.LENGTH_LONG).show();
+                                    finish();
                                 }else{
                                     Toast.makeText(getApplicationContext(), "이메일에 보내는 것을 실패했습니다.", Toast.LENGTH_SHORT).show();
                                 }

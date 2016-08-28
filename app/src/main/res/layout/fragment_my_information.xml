@@ -12,12 +12,12 @@
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/profile_image"
-            android:layout_width="96dp"
-            android:layout_height="96dp"
-            android:layout_marginLeft="42dp"
-            android:layout_marginTop="42dp"
-            app:civ_border_color="#81d4fa"
-            app:civ_border_width="2dp" />
+            android:layout_width="@dimen/width_profile_image"
+            android:layout_height="@dimen/height_profile_image"
+            android:layout_marginLeft="@dimen/margin_profile_image_left"
+            android:layout_marginTop="@dimen/margin_profile_image_top"
+            app:civ_border_color="@color/backgroundDark"
+            app:civ_border_width="1dp" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -28,21 +28,21 @@
                 android:id="@+id/text_view_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:layout_marginTop="42dp"
-                android:textSize="16dp"
+                android:gravity="center_horizontal"
+                android:layout_marginTop="@dimen/margin_profile_image_top"
+                android:textSize="@dimen/textsize_profile_name"
                 android:textStyle="bold" />
 
             <Button
                 android:id="@+id/button_upload_image"
-                android:layout_width="164dp"
+                android:layout_width="@dimen/width_profile_upload_button"
                 android:layout_height="wrap_content"
-                android:textColor="@android:color/white"
-                android:layout_margin="20dp"
+                android:layout_gravity="center"
+                android:layout_margin="@dimen/margin_profile_upload_button"
                 android:background="@color/colorAccent"
-                android:layout_gravity="center_vertical"
-                android:text="Upload Image"
-                android:textAllCaps="false" />
+                android:text="@string/my_information_upload_button"
+                android:textAllCaps="false"
+                android:textColor="@android:color/white" />
         </LinearLayout>
 
     </LinearLayout>

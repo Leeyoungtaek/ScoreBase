@@ -1,6 +1,5 @@
 package com.scorebase.scorebase;
 
-import android.app.ProgressDialog;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
