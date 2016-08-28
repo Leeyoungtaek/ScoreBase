@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -15,11 +16,17 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
@@ -85,14 +92,40 @@ public class MyInformationFragment extends Fragment {
         return view;
     }
 
+    private byte[] bitmapToByteArray(Bitmap bitmap){
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+        byte[] byteArray = stream.toByteArray();
+        return byteArray;
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == PICK_FROM_GALLERY) {
             if (resultCode == Activity.RESULT_OK) {
                 try {
-                    ((MainActivity)getActivity()).setImage_bitmap(MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), data.getData()));
-                    profileImage.setImageBitmap(((MainActivity)getActivity()).getImage_bitmap());
+                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), data.getData());
+                    int height = bitmap.getHeight();
+                    int width = bitmap.getWidth();
+
+                    bitmap = Bitmap.createScaledBitmap(bitmap, 640, height/(width/640), true);
+                    final Bitmap finalBitmap = bitmap;
+
+                    StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("profile/" + auth.getCurrentUser().getEmail() + ".jpg");
+                    UploadTask uploadTask = storageReference.putBytes(bitmapToByteArray(bitmap));
+                    uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            ((MainActivity)getActivity()).setImage_bitmap(finalBitmap);
+                            profileImage.setImageBitmap(((MainActivity)getActivity()).getImage_bitmap());
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(getContext(), "다시 이미지를 업로드해주세요!", Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 } catch (FileNotFoundException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();

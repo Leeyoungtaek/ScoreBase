@@ -1,11 +1,10 @@
 package com.scorebase.scorebase;
 
-import android.content.Intent;
+import android.app.ProgressDialog;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -13,8 +12,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.widget.ImageView;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -23,6 +20,10 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,9 +37,7 @@ public class MainActivity extends AppCompatActivity {
     private Bitmap image_bitmap;
 
     private FirebaseAuth auth;
-
     private StorageReference storageReference;
-    private StorageReference pathReference;
 
     private int[] tabIcons ={
             R.drawable.ic_view_module_black_24dp,
@@ -57,11 +56,12 @@ public class MainActivity extends AppCompatActivity {
         storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
             public void onSuccess(Uri uri) {
-                try {
-                    image_bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                final Uri newUri = uri;
+                new Thread(){
+                    public void run(){
+                        setImage_bitmap(getImageFromFirebase(newUri));
+                    }
+                }.start();
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -78,6 +78,26 @@ public class MainActivity extends AppCompatActivity {
         setupTabIcons();
     }
 
+    private Bitmap getImageFromFirebase(Uri uri){
+        URL url = null;
+        Bitmap bitmap = null;
+        try {
+            url = new URL(uri.toString());
+            HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+            connection.setDoInput(true);
+            connection.connect();
+            InputStream in = connection.getInputStream();
+            bitmap =  BitmapFactory.decodeStream(in);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        return bitmap;
+    }
+
     private void setupTabIcons(){
         tabLayout.getTabAt(0).setIcon(tabIcons[0]);
         tabLayout.getTabAt(1).setIcon(tabIcons[1]);
@@ -90,7 +110,6 @@ public class MainActivity extends AppCompatActivity {
     public Bitmap getImage_bitmap(){
         return image_bitmap;
     }
-
 
     private void setupViewPager(ViewPager viewPager) {
         mFragmentManager = getSupportFragmentManager();
@@ -126,6 +145,5 @@ public class MainActivity extends AppCompatActivity {
         public CharSequence getPageTitle(int position) {
             return null;
         }
-
     }
 }
