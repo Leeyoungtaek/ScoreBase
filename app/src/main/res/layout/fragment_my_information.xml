@@ -1,51 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.cjj.MaterialRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout_refresh"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    app:overlay="false"
+    app:wave_show="false">
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/profile_image"
-            android:layout_width="@dimen/width_profile_image"
-            android:layout_height="@dimen/height_profile_image"
-            android:layout_marginLeft="@dimen/margin_profile_image_left"
-            android:layout_marginTop="@dimen/margin_profile_image_top"
-            app:civ_border_color="@color/backgroundDark"
-            app:civ_border_width="1dp" />
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="top">
 
-            <TextView
-                android:id="@+id/text_view_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/profile_image"
+                android:layout_width="@dimen/width_profile_image"
+                android:layout_height="@dimen/height_profile_image"
+                android:layout_marginLeft="@dimen/margin_profile_image_left"
                 android:layout_marginTop="@dimen/margin_profile_image_top"
-                android:textSize="@dimen/textsize_profile_name"
-                android:textStyle="bold" />
+                app:civ_border_color="@color/backgroundDark"
+                app:civ_border_width="1dp" />
 
-            <Button
-                android:id="@+id/button_upload_image"
-                android:layout_width="@dimen/width_profile_upload_button"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_margin="@dimen/margin_profile_upload_button"
-                android:background="@color/colorAccent"
-                android:text="@string/my_information_upload_button"
-                android:textAllCaps="false"
-                android:textColor="@android:color/white" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/text_view_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_profile_image_top"
+                    android:gravity="center_horizontal"
+                    android:textSize="@dimen/textsize_profile_name"
+                    android:textStyle="bold" />
+
+                <Button
+                    android:id="@+id/button_upload_image"
+                    android:layout_width="@dimen/width_profile_upload_button"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_margin="@dimen/margin_profile_upload_button"
+                    android:background="@color/colorAccent"
+                    android:text="@string/my_information_upload_button"
+                    android:textAllCaps="false"
+                    android:textColor="@android:color/white" />
+            </LinearLayout>
+
         </LinearLayout>
+    </ScrollView>
 
-    </LinearLayout>
 
-
-</LinearLayout>
+</com.cjj.MaterialRefreshLayout>
