@@ -1,26 +1,20 @@
 package com.scorebase.scorebase;
 
 import android.app.Activity;
-import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.cjj.MaterialRefreshLayout;
-import com.cjj.MaterialRefreshListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -28,7 +22,6 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -50,8 +43,6 @@ public class MyInformationFragment extends Fragment {
     private StorageReference storageRef;
     private StorageReference imagesRef;
     private StorageReference spaceRef;
-
-//    private MaterialRefreshLayout materialRefreshLayout;
 
     public final static int PICK_FROM_GALLERY = 1001;
 
@@ -75,21 +66,6 @@ public class MyInformationFragment extends Fragment {
         }else{
             profileImage.setImageBitmap(((MainActivity)getActivity()).getImage_bitmap());
         }
-//        materialRefreshLayout = (MaterialRefreshLayout)view.findViewById(R.id.layout_refresh);
-//        materialRefreshLayout.setMaterialRefreshListener(new MaterialRefreshListener() {
-//            @Override
-//            public void onRefresh(MaterialRefreshLayout materialRefreshLayout) {
-//                if(((MainActivity)getActivity()).getImage_bitmap()==null){
-//                    profileImage.setImageResource(R.drawable.ic_cached_black_24dp);
-//                    materialRefreshLayout.finishRefresh();
-//                    materialRefreshLayout.finishRefreshLoadMore();
-//                }else{
-//                    profileImage.setImageBitmap(((MainActivity)getActivity()).getImage_bitmap());
-//                    materialRefreshLayout.finishRefresh();
-//                    materialRefreshLayout.finishRefreshLoadMore();
-//                }
-//            }
-//        });
         nameText = (TextView) view.findViewById(R.id.text_view_name);
         uploadImage = (Button) view.findViewById(R.id.button_upload_image);
         uploadImage.setOnClickListener(new View.OnClickListener() {

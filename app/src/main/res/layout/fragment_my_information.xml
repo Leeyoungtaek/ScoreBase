@@ -1,59 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.cjj.MaterialRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/layout_refresh"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/layout_refresh"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    app:overlay="false"
-    app:wave_show="false">
+    android:orientation="vertical">
 
-    <ScrollView
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:gravity="top"
+        android:orientation="horizontal">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/profile_image"
+            android:layout_width="@dimen/width_profile_image"
+            android:layout_height="@dimen/height_profile_image"
+            android:layout_marginLeft="@dimen/margin_profile_image_left"
+            android:layout_marginTop="@dimen/margin_profile_image_top"
+            app:civ_border_color="@color/backgroundDark"
+            app:civ_border_width="1dp" />
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="top">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/profile_image"
-                android:layout_width="@dimen/width_profile_image"
-                android:layout_height="@dimen/height_profile_image"
-                android:layout_marginLeft="@dimen/margin_profile_image_left"
-                android:layout_marginTop="@dimen/margin_profile_image_top"
-                app:civ_border_color="@color/backgroundDark"
-                app:civ_border_width="1dp" />
-
-            <LinearLayout
+            <TextView
+                android:id="@+id/text_view_name"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_profile_image_top"
+                android:gravity="center_horizontal"
+                android:textSize="@dimen/textsize_profile_name"
+                android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/text_view_name"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/margin_profile_image_top"
-                    android:gravity="center_horizontal"
-                    android:textSize="@dimen/textsize_profile_name"
-                    android:textStyle="bold" />
-
-                <Button
-                    android:id="@+id/button_upload_image"
-                    android:layout_width="@dimen/width_profile_upload_button"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_margin="@dimen/margin_profile_upload_button"
-                    android:background="@color/colorAccent"
-                    android:text="@string/my_information_upload_button"
-                    android:textAllCaps="false"
-                    android:textColor="@android:color/white" />
-            </LinearLayout>
-
+            <Button
+                android:id="@+id/button_upload_image"
+                android:layout_width="@dimen/width_profile_upload_button"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="@dimen/margin_profile_upload_button"
+                android:background="@color/colorAccent"
+                android:text="@string/my_information_upload_button"
+                android:textAllCaps="false"
+                android:textColor="@android:color/white" />
         </LinearLayout>
-    </ScrollView>
+
+    </LinearLayout>
 
 
-</com.cjj.MaterialRefreshLayout>
+</LinearLayout>

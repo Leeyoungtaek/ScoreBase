@@ -4,15 +4,15 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
-import android.view.ViewGroup;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -20,11 +20,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,6 +41,8 @@ public class MainActivity extends AppCompatActivity {
             R.drawable.ic_face_black_24dp
     };
 
+    private ImageLoadThread mThread;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,11 +55,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onSuccess(Uri uri) {
                 final Uri newUri = uri;
-                new Thread(){
-                    public void run(){
-                        setImage_bitmap(getImageFromFirebase(newUri));
-                    }
-                }.start();
+                mThread = new ImageLoadThread(mHandler, newUri);
+                mThread.start();
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -79,25 +73,21 @@ public class MainActivity extends AppCompatActivity {
         setupTabIcons();
     }
 
-    private Bitmap getImageFromFirebase(Uri uri){
-        URL url = null;
-        Bitmap bitmap = null;
-        try {
-            url = new URL(uri.toString());
-            HttpURLConnection connection = (HttpURLConnection)url.openConnection();
-            connection.setDoInput(true);
-            connection.connect();
-            InputStream in = connection.getInputStream();
-            bitmap =  BitmapFactory.decodeStream(in);
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (Exception e){
-            e.printStackTrace();
+    Handler mHandler = new Handler() {
+        public void handleMessage(android.os.Message msg){
+            if(msg.what == 0){
+                image_bitmap = (Bitmap) msg.obj;
+                Fragment frg = null;
+                frg = getSupportFragmentManager().findFragmentByTag("android:switcher:" + viewPager.getId() + ":" + 2);
+                if(frg != null){
+                    final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                    ft.detach(frg);
+                    ft.attach(frg);
+                    ft.commit();
+                }
+            }
         }
-        return bitmap;
-    }
+    };
 
     private void setupTabIcons(){
         tabLayout.getTabAt(0).setIcon(tabIcons[0]);
