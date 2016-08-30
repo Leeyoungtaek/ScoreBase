@@ -62,7 +62,7 @@ public class MyInformationFragment extends Fragment {
 
         profileImage = (CircleImageView) view.findViewById(R.id.profile_image);
         if(((MainActivity)getActivity()).getImage_bitmap()==null){
-            profileImage.setImageResource(R.drawable.ic_cached_black_24dp);
+            profileImage.setImageResource(R.drawable.ic_clear_black_48dp);
         }else{
             profileImage.setImageBitmap(((MainActivity)getActivity()).getImage_bitmap());
         }

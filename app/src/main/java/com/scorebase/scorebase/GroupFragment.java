@@ -1,12 +1,13 @@
 package com.scorebase.scorebase;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
+import android.widget.Toast;
 
 import com.melnykov.fab.FloatingActionButton;
 
@@ -15,7 +16,6 @@ import com.melnykov.fab.FloatingActionButton;
  */
 public class GroupFragment extends Fragment {
 
-    private ListView listView;
     private FloatingActionButton floatingActionButton;
 
     public GroupFragment(){
@@ -31,7 +31,16 @@ public class GroupFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_group, container, false);
-
+        floatingActionButton = (FloatingActionButton)view.findViewById(R.id.fab);
+        floatingActionButton.setColorNormalResId(R.color.colorAccent);
+        floatingActionButton.setColorPressedResId(R.color.colorFloatingActionButton);
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getContext(), AddGroupActivity.class);
+                startActivity(intent);
+            }
+        });
         return view;
     }
 }

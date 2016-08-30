@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                image_bitmap = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.drawable.default_profile);
+                image_bitmap = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.drawable.ic_clear_black_48dp);
             }
         });
 
