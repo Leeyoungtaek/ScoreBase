@@ -20,6 +20,12 @@
             android:inputType="text" />
     </android.support.design.widget.TextInputLayout>
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:text="공개범위"/>
+
     <RadioGroup
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -37,9 +43,11 @@
     </RadioGroup>
 
     <Button
+        android:textColor="@android:color/white"
         android:layout_gravity="bottom"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/colorAccent"
         android:text="Add"/>
 
 </LinearLayout>
