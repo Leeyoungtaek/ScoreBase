@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
                 image_bitmap = (Bitmap) msg.obj;
                 Fragment frg = null;
                 frg = getSupportFragmentManager().findFragmentByTag("android:switcher:" + viewPager.getId() + ":" + 2);
-                if(frg != null){
+                if(viewPager.getCurrentItem()==2){
                     final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
                     ft.detach(frg);
                     ft.attach(frg);
