@@ -18,7 +18,6 @@ import java.util.List;
 public class AddSportAdapter extends RecyclerView.Adapter<AddSportAdapter.SportViewHolder> {
 
     List<AddGroupActivity.Sport> sports;
-    boolean[] states = new boolean[5];
 
     AddSportAdapter(List<AddGroupActivity.Sport> sports){
         this.sports = sports;

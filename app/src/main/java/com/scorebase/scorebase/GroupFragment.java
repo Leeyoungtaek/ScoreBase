@@ -16,6 +16,7 @@ import com.melnykov.fab.FloatingActionButton;
  */
 public class GroupFragment extends Fragment {
 
+    // Views
     private FloatingActionButton floatingActionButton;
 
     public GroupFragment(){
@@ -31,9 +32,15 @@ public class GroupFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_group, container, false);
+
+        // View Reference
         floatingActionButton = (FloatingActionButton)view.findViewById(R.id.fab);
+
+        // View Setting
         floatingActionButton.setColorNormalResId(R.color.colorAccent);
         floatingActionButton.setColorPressedResId(R.color.colorFloatingActionButton);
+
+        // Go to AddGroupActivity
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

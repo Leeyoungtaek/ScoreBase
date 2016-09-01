@@ -20,17 +20,19 @@ import java.util.List;
 
 public class AddGroupActivity extends AppCompatActivity {
 
+    // RecyclerView
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
-
     private List<Sport> sports;
 
+    // Views
     private EditText editTextGroupName;
     private RadioGroup radioGroup;
     private RadioButton radioButton;
     private Button addButton;
 
+    // Firebase
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference databaseReference;
 
@@ -39,23 +41,39 @@ public class AddGroupActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_group);
 
-        firebaseDatabase = FirebaseDatabase.getInstance();
-        databaseReference = firebaseDatabase.getReference();
-
+        // View Reference
         editTextGroupName = (EditText)findViewById(R.id.edit_text_group_name);
         radioGroup = (RadioGroup)findViewById(R.id.radio_group);
         radioButton = (RadioButton)findViewById(R.id.button_public);
-        radioButton.setChecked(true);
         addButton = (Button)findViewById(R.id.button_group_add);
+        mRecyclerView = (RecyclerView)findViewById(R.id.recycler_view);
+
+        // Firebase Reference
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        databaseReference = firebaseDatabase.getReference();
+
+        // RecyclerView Setting
+        mRecyclerView.setHasFixedSize(true);
+        mLayoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.HORIZONTAL, false);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        initializeData();
+        mAdapter = new AddSportAdapter(sports);
+        mRecyclerView.setAdapter(mAdapter);
+
+        // View Setting
+        radioButton.setChecked(true);
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // Sports state check
                 boolean states[] = new boolean[5];
+                // Group Name
                 String groupName = editTextGroupName.getText().toString().trim();
-                String accessScope;
+
+                // Access Scope
                 int id = radioGroup.getCheckedRadioButtonId();
                 RadioButton checkedRadioButton = (RadioButton)findViewById(id);
-                accessScope = checkedRadioButton.getText().toString();
+                String accessScope = checkedRadioButton.getText().toString();
 
                 // RecyclerView state
                 for (int i=0; i<mAdapter.getItemCount(); i++){
@@ -67,28 +85,21 @@ public class AddGroupActivity extends AppCompatActivity {
                         states[i] = sportViewHolder.getState();
                     }
                 }
+
+                // Error Check
                 if(TextUtils.isEmpty(groupName) || !isChecked(states)){
                     Toast.makeText(getApplicationContext(), "입력을 완료해주세요!", Toast.LENGTH_LONG).show();
                     return;
                 }
+
+                // Save in Database
                 databaseReference.child("group").push().setValue(new Group(groupName, accessScope, states));
                 finish();
             }
         });
-
-        mRecyclerView = (RecyclerView)findViewById(R.id.recycler_view);
-
-        mRecyclerView.setHasFixedSize(true);
-
-        mLayoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.HORIZONTAL, false);
-        mRecyclerView.setLayoutManager(mLayoutManager);
-
-        initializeData();
-
-        mAdapter = new AddSportAdapter(sports);
-        mRecyclerView.setAdapter(mAdapter);
     }
 
+    //  Check RecyclerView is Empty
     private boolean isChecked(boolean[] states){
         for (int i=0; i<states.length; i++){
             if(states[i]==true){
@@ -98,6 +109,7 @@ public class AddGroupActivity extends AppCompatActivity {
         return false;
     }
 
+    // sports init
     private void initializeData(){
         sports = new ArrayList<>();
         sports.add(new Sport(R.drawable.baseball, Group.sportNames[0]));
@@ -107,6 +119,7 @@ public class AddGroupActivity extends AppCompatActivity {
         sports.add(new Sport(R.drawable.tennisball, Group.sportNames[4]));
     }
 
+    // Sport Class
     class Sport{
         int imageId;
         String name;

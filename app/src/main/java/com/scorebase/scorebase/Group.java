@@ -4,10 +4,12 @@ import java.util.ArrayList;
 
 /**
  * Created by DSM_055 on 2016-09-01.
+ * Group Class
  */
 public class Group {
     public String groupName;
     public String accessScope;
+    public ArrayList<String> sports;
     public static String[] sportNames = new String[]{
             "baseball",
             "basketball",
@@ -15,7 +17,7 @@ public class Group {
             "soccer",
             "tennisball"
     };
-    public ArrayList<String> sports;
+
     Group(String groupName, String accessScope, boolean[] states){
         sports = new ArrayList<String>();
         this.groupName = groupName;

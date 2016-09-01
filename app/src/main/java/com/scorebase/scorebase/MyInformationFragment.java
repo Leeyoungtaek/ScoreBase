@@ -107,6 +107,7 @@ public class MyInformationFragment extends Fragment {
                     int height = bitmap.getHeight();
                     int width = bitmap.getWidth();
 
+                    // Compress Bitmap
                     bitmap = Bitmap.createScaledBitmap(bitmap, 640, height/(width/640), true);
                     final Bitmap finalBitmap = bitmap;
 
