@@ -16,10 +16,12 @@ import com.google.firebase.auth.FirebaseAuth;
 
 public class ForgotPasswordActivity extends AppCompatActivity {
 
+    // Views
     private EditText inputEmail;
     private Button btnResetPassword, btnBack;
     private ProgressBar progressBar;
 
+    // Firebase
     private FirebaseAuth auth;
 
     @Override
@@ -27,16 +29,19 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_forgot_password);
 
+        // View Reference
         progressBar = (ProgressBar)findViewById(R.id.progressbar);
-
         inputEmail = (EditText)findViewById(R.id.edit_text_email);
-
         btnResetPassword = (Button)findViewById(R.id.button_reset_password);
         btnBack = (Button)findViewById(R.id.button_back);
-        btnBack.setText("<<BACK");
 
+        // Firebase Reference
         auth = FirebaseAuth.getInstance();
 
+        // View setting
+        btnBack.setText("<<BACK");
+
+        // Go to Back
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -44,17 +49,23 @@ public class ForgotPasswordActivity extends AppCompatActivity {
             }
         });
 
+        // Send ResetPassword email
         btnResetPassword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // Get email
                 String email = inputEmail.getText().toString().trim();
+
+                // Check Empty
                 if(TextUtils.isEmpty(email)){
                     Toast.makeText(getApplicationContext(), "이메일을 입력해주세요!", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
+                // Loading ...
                 progressBar.setVisibility(View.VISIBLE);
 
+                // Send email for reset password
                 auth.sendPasswordResetEmail(email)
                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override

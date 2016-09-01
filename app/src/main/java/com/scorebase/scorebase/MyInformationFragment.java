@@ -33,17 +33,17 @@ import de.hdodenhof.circleimageview.CircleImageView;
  */
 public class MyInformationFragment extends Fragment {
 
+    // Views
     private TextView nameText;
     private Button uploadImage;
     private CircleImageView profileImage;
 
+    // Firebase
     private FirebaseAuth auth;
+    private StorageReference storageReference;
+    private UploadTask uploadTask;
 
-    private FirebaseStorage storage;
-    private StorageReference storageRef;
-    private StorageReference imagesRef;
-    private StorageReference spaceRef;
-
+    // Gallery Request Code
     public final static int PICK_FROM_GALLERY = 1001;
 
     public MyInformationFragment() {
@@ -60,14 +60,19 @@ public class MyInformationFragment extends Fragment {
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_my_information, container, false);
 
+        // View Reference
         profileImage = (CircleImageView) view.findViewById(R.id.profile_image);
+        nameText = (TextView) view.findViewById(R.id.text_view_name);
+        uploadImage = (Button) view.findViewById(R.id.button_upload_image);
+
+        // Set Profile Image
         if(((MainActivity)getActivity()).getImage_bitmap()==null){
             profileImage.setImageResource(R.drawable.ic_clear_black_48dp);
         }else{
             profileImage.setImageBitmap(((MainActivity)getActivity()).getImage_bitmap());
         }
-        nameText = (TextView) view.findViewById(R.id.text_view_name);
-        uploadImage = (Button) view.findViewById(R.id.button_upload_image);
+
+        // Go to Gallery
         uploadImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -78,15 +83,7 @@ public class MyInformationFragment extends Fragment {
             }
         });
 
-
-        auth = FirebaseAuth.getInstance();
-        storage = FirebaseStorage.getInstance();
-        storageRef = storage.getReferenceFromUrl("gs://scorebase-6b4ac.appspot.com");
-        imagesRef = storageRef.child("profileImage");
-        String fileName = auth.getCurrentUser().getEmail() + ".jpg";
-        spaceRef = imagesRef.child(fileName);
-
-
+        // Set View
         nameText.setText(auth.getCurrentUser().getEmail());
 
         return view;
@@ -102,6 +99,7 @@ public class MyInformationFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        // Request to gallery
         if (requestCode == PICK_FROM_GALLERY) {
             if (resultCode == Activity.RESULT_OK) {
                 try {
@@ -112,8 +110,8 @@ public class MyInformationFragment extends Fragment {
                     bitmap = Bitmap.createScaledBitmap(bitmap, 640, height/(width/640), true);
                     final Bitmap finalBitmap = bitmap;
 
-                    StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("profile/" + auth.getCurrentUser().getEmail() + ".jpg");
-                    UploadTask uploadTask = storageReference.putBytes(bitmapToByteArray(bitmap));
+                    storageReference = FirebaseStorage.getInstance().getReference().child("profile/" + auth.getCurrentUser().getEmail() + ".jpg");
+                    uploadTask = storageReference.putBytes(bitmapToByteArray(bitmap));
                     uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {

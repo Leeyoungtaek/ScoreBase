@@ -15,6 +15,7 @@ import java.net.URL;
 
 /**
  * Created by DSM_055 on 2016-08-30.
+ * Image DownLoad Thread
  */
 public class ImageLoadThread extends Thread {
 
@@ -28,16 +29,21 @@ public class ImageLoadThread extends Thread {
 
     @Override
     public void run() {
+        // Set Message
         Message msg = Message.obtain();
         msg.what = 0;
         msg.obj = getImageFromFirebase(uri);
+
+        // Send Message
         mHandler.sendMessage(msg);
     }
 
+    // Get Bitmap from Uri
     private Bitmap getImageFromFirebase(Uri uri){
         URL url = null;
         Bitmap bitmap = null;
         try {
+            // Download
             url = new URL(uri.toString());
             HttpURLConnection connection = (HttpURLConnection)url.openConnection();
             connection.setDoInput(true);

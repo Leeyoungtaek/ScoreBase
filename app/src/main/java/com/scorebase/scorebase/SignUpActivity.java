@@ -27,30 +27,31 @@ import java.io.InputStream;
 
 public class SignUpActivity extends AppCompatActivity {
 
+    // Views
     private EditText inputEmail, inputPassword;
     private Button btnSignUp, btnSignIn, btnResetPassword;
     private ProgressBar progressBar;
 
+    // firebase
     private FirebaseAuth auth;
-    private StorageReference storageRef;
-    private UploadTask uploadTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
 
-        auth = FirebaseAuth.getInstance();
-
+        // View Reference
         progressBar = (ProgressBar)findViewById(R.id.progressbar);
-
         inputEmail = (EditText)findViewById(R.id.edit_text_email);
         inputPassword = (EditText)findViewById(R.id.edit_text_password);
-
         btnSignUp = (Button)findViewById(R.id.button_sign_up);
         btnResetPassword = (Button)findViewById(R.id.button_password);
         btnSignIn = (Button)findViewById(R.id.button_sign_in);
 
+        // Firebase Reference
+        auth = FirebaseAuth.getInstance();
+
+        // Go to ForgotPasswordActivity
         btnResetPassword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -59,6 +60,7 @@ public class SignUpActivity extends AppCompatActivity {
             }
         });
 
+        // Go to SignInActivity
         btnSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -66,12 +68,15 @@ public class SignUpActivity extends AppCompatActivity {
             }
         });
 
+        // SignUp
         btnSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // Get email, password
                 String email = inputEmail.getText().toString().trim();
                 String password = inputPassword.getText().toString().trim();
 
+                // Check Empty
                 if(TextUtils.isEmpty(email)){
                     Toast.makeText(getApplicationContext(), "이메일를 입력해주세요!", Toast.LENGTH_SHORT).show();
                     return;
@@ -80,13 +85,16 @@ public class SignUpActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "패스워드를 입력해주세요!", Toast.LENGTH_SHORT).show();
                     return;
                 }
+                // Check Error
                 if(password.length()<6){
                     Toast.makeText(getApplicationContext(), "패스워드가 너무 짧습니다. 다시 입력해주세요!", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
+                // Loading ...
                 progressBar.setVisibility(View.VISIBLE);
 
+                // SingUp
                 auth.createUserWithEmailAndPassword(email, password)
                         .addOnCompleteListener(SignUpActivity.this, new OnCompleteListener<AuthResult>() {
                             @Override
