@@ -19,4 +19,7 @@
     <dimen name="margin_profile_upload_button">20dp</dimen>
     <dimen name="textsize_profile_name">16dp</dimen>
     <dimen name="width_profile_upload_button">164dp</dimen>
+    <dimen name="margin_add_group_text">16dp</dimen>
+    <dimen name="height_add_group_recycler_view">180dp</dimen>
+    <dimen name="margin_add_group_edit_text">16dp</dimen>
 </resources>

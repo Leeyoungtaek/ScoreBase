@@ -6,4 +6,5 @@
     <color name="colorFloatingActionButton">#795548</color>
     <color name="background">#B3E5FC</color>
     <color name="backgroundDark">#81d4fa</color>
+    <color name="cardViewBackGround">#ffffff</color>
 </resources>

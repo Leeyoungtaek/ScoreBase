@@ -1,5 +1,6 @@
 package com.scorebase.scorebase;
 
+import android.graphics.Color;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -17,6 +18,7 @@ import java.util.List;
 public class AddSportAdapter extends RecyclerView.Adapter<AddSportAdapter.SportViewHolder> {
 
     List<AddGroupActivity.Sport> sports;
+    boolean[] states = new boolean[5];
 
     AddSportAdapter(List<AddGroupActivity.Sport> sports){
         this.sports = sports;
@@ -35,6 +37,13 @@ public class AddSportAdapter extends RecyclerView.Adapter<AddSportAdapter.SportV
         holder.cv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(holder.state==false){
+                    holder.state=true;
+                    holder.cv.setCardBackgroundColor(Color.GRAY);
+                }else{
+                    holder.state=false;
+                    holder.cv.setCardBackgroundColor(Color.WHITE);
+                }
             }
         });
     }
@@ -45,13 +54,19 @@ public class AddSportAdapter extends RecyclerView.Adapter<AddSportAdapter.SportV
     }
 
     public static class SportViewHolder extends RecyclerView.ViewHolder {
-        CardView cv;
-        ImageView sportImage;
+        private CardView cv;
+        private ImageView sportImage;
+        private boolean state;
 
         SportViewHolder(View itemView){
             super(itemView);
             cv = (CardView)itemView.findViewById(R.id.card_view);
             sportImage = (ImageView)itemView.findViewById(R.id.add_sport_image);
+            state = false;
+        }
+
+        public boolean getState(){
+            return state;
         }
     }
 

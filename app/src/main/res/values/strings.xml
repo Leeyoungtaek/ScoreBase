@@ -12,4 +12,7 @@
     <string name="sign_reset_password">Reset Password</string>
     <string name="sign_back_button">BACK</string>
     <string name="my_information_upload_button">Upload Image</string>
+    <string name="add_group_name">Group Name</string>
+    <string name="add_group_input_sports">그룹에서 하실 스포츠를 선택해주세요.</string>
+    <string name="add_group_input_public_or_private">공개범위</string>
 </resources>

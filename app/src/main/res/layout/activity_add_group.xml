@@ -10,51 +10,60 @@
     <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp">
+        android:layout_margin="@dimen/margin_add_group_edit_text">
 
         <EditText
             android:id="@+id/edit_text_group_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Group Name"
+            android:hint="@string/add_group_name"
             android:inputType="text" />
     </android.support.design.widget.TextInputLayout>
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recycler_view"
-        android:scrollbars="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="180dp"/>
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:text="공개범위"/>
+        android:layout_margin="@dimen/margin_add_group_text"
+        android:text="@string/add_group_input_sports" />
 
-    <RadioGroup
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/height_add_group_recycler_view"
+        android:scrollbars="horizontal" />
+
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp">
+        android:layout_marginLeft="@dimen/margin_add_group_text"
+        android:text="@string/add_group_input_public_or_private" />
+
+    <RadioGroup
+        android:id="@+id/radio_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_add_group_text">
+
+        <android.support.v7.widget.AppCompatRadioButton
+            android:id="@+id/button_public"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Public" />
 
         <android.support.v7.widget.AppCompatRadioButton
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Public"/>
-
-        <android.support.v7.widget.AppCompatRadioButton
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Private"/>
+            android:text="Private" />
     </RadioGroup>
 
     <Button
-        android:textColor="@android:color/white"
-        android:layout_gravity="bottom"
+        android:id="@+id/button_group_add"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
+        android:layout_gravity="bottom"
+        android:layout_margin="@dimen/margin_add_group_text"
         android:background="@color/colorAccent"
-        android:text="Add"/>
+        android:text="Add"
+        android:textColor="@android:color/white" />
 
 </LinearLayout>
