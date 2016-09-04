@@ -2,8 +2,12 @@
     <string name="app_name">Scorebase</string>
     <string name="sign_email">Email</string>
     <string name="sign_password">Password</string>
+    <string name="sign_gender">Gender</string>
+    <string name="sign_name">Name</string>
     <string name="sign_singin">Sign In</string>
     <string name="sign_register">Register</string>
+    <string name="sign_introduction">Introduction</string>
+    <string name="sign_upload_button">Upload Image</string>
     <string name="sign_go_to_forgot_password">Forgot your password?</string>
     <string name="sign_go_to_register">Not a member? Get registered now!</string>
     <string name="sign_go_to_sign_in">Already registered. Sign In!</string>

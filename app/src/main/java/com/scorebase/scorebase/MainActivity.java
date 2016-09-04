@@ -17,6 +17,7 @@ import android.support.v7.app.AppCompatActivity;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -44,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
     // Firebase
     private FirebaseAuth auth;
     private StorageReference storageReference;
+    private FirebaseUser user;
 
     // Thread for loading image
     private ImageLoadThread mThread;
@@ -55,25 +57,35 @@ public class MainActivity extends AppCompatActivity {
 
         // Firebase Reference
         auth = FirebaseAuth.getInstance();
+        user = auth.getCurrentUser();
         storageReference = FirebaseStorage.getInstance().getReference().child("profile/" + auth.getCurrentUser().getEmail() + ".jpg");
 
-        // Image Download
-        storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-            @Override
-            public void onSuccess(Uri uri) {
-                final Uri newUri = uri;
+        // Get Profile Image
+        Uri uri = user.getPhotoUrl();
+        if(uri != null){
+            mThread = new ImageLoadThread(mHandler, uri);
+            mThread.start();
+        }else{
+            image_bitmap = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.drawable.default_image);
+        }
 
-                // New Image Loading Thread
-                mThread = new ImageLoadThread(mHandler, newUri);
-                mThread.start();
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                // If Empty Set Default Image
-                image_bitmap = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.drawable.ic_clear_black_48dp);
-            }
-        });
+//        // Image Download
+//        storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+//            @Override
+//            public void onSuccess(Uri uri) {
+//                final Uri newUri = uri;
+//
+//                // New Image Loading Thread
+//                mThread = new ImageLoadThread(mHandler, newUri);
+//                mThread.start();
+//            }
+//        }).addOnFailureListener(new OnFailureListener() {
+//            @Override
+//            public void onFailure(@NonNull Exception e) {
+//                // If Empty Set Default Image
+//                image_bitmap = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.drawable.ic_clear_black_48dp);
+//            }
+//        });
 
         // Fragment Setting
         viewPager = (ViewPager) findViewById(R.id.viewpager);

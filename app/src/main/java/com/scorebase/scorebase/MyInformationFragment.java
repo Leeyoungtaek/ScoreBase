@@ -1,8 +1,10 @@
 package com.scorebase.scorebase;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -12,12 +14,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -40,6 +47,7 @@ public class MyInformationFragment extends Fragment {
 
     // Firebase
     private FirebaseAuth auth;
+    private FirebaseUser user;
     private StorageReference storageReference;
     private UploadTask uploadTask;
 
@@ -65,6 +73,10 @@ public class MyInformationFragment extends Fragment {
         nameText = (TextView) view.findViewById(R.id.text_view_name);
         uploadImage = (Button) view.findViewById(R.id.button_upload_image);
 
+        // Firebase Reference
+        auth = FirebaseAuth.getInstance();
+        user = auth.getCurrentUser();
+
         // Set Profile Image
         if(((MainActivity)getActivity()).getImage_bitmap()==null){
             profileImage.setImageResource(R.drawable.ic_clear_black_48dp);
@@ -84,7 +96,7 @@ public class MyInformationFragment extends Fragment {
         });
 
         // Set View
-        nameText.setText(auth.getCurrentUser().getEmail());
+        nameText.setText(user.getEmail());
 
         return view;
     }
@@ -94,6 +106,13 @@ public class MyInformationFragment extends Fragment {
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
         byte[] byteArray = stream.toByteArray();
         return byteArray;
+    }
+
+    public Uri getImageUri(Context inContext, Bitmap inImage) {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
+        return Uri.parse(path);
     }
 
     @Override
@@ -111,20 +130,38 @@ public class MyInformationFragment extends Fragment {
                     bitmap = Bitmap.createScaledBitmap(bitmap, 640, height/(width/640), true);
                     final Bitmap finalBitmap = bitmap;
 
-                    storageReference = FirebaseStorage.getInstance().getReference().child("profile/" + auth.getCurrentUser().getEmail() + ".jpg");
-                    uploadTask = storageReference.putBytes(bitmapToByteArray(bitmap));
-                    uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            ((MainActivity)getActivity()).setImage_bitmap(finalBitmap);
-                            profileImage.setImageBitmap(((MainActivity)getActivity()).getImage_bitmap());
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
+                    // Upload Profile Image
+                    Uri uri = getImageUri(getContext(), bitmap);
+                    UserProfileChangeRequest profileChangeRequest = new UserProfileChangeRequest.Builder()
+                            .setPhotoUri(uri)
+                            .build();
+                    user.updateProfile(profileChangeRequest)
+                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    ((MainActivity)getActivity()).setImage_bitmap(finalBitmap);
+                                    profileImage.setImageBitmap(((MainActivity)getActivity()).getImage_bitmap());
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
                             Toast.makeText(getContext(), "다시 이미지를 업로드해주세요!", Toast.LENGTH_SHORT).show();
                         }
                     });
+//                    storageReference = FirebaseStorage.getInstance().getReference().child("profile/" + auth.getCurrentUser().getEmail() + ".jpg");
+//                    uploadTask = storageReference.putBytes(bitmapToByteArray(bitmap));
+//                    uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+//                        @Override
+//                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+//                            ((MainActivity)getActivity()).setImage_bitmap(finalBitmap);
+//                            profileImage.setImageBitmap(((MainActivity)getActivity()).getImage_bitmap());
+//                        }
+//                    }).addOnFailureListener(new OnFailureListener() {
+//                        @Override
+//                        public void onFailure(@NonNull Exception e) {
+//                            Toast.makeText(getContext(), "다시 이미지를 업로드해주세요!", Toast.LENGTH_SHORT).show();
+//                        }
+//                    });
                 } catch (FileNotFoundException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();

@@ -10,6 +10,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -28,9 +30,11 @@ import java.io.InputStream;
 public class SignUpActivity extends AppCompatActivity {
 
     // Views
-    private EditText inputEmail, inputPassword;
-    private Button btnSignUp, btnSignIn, btnResetPassword;
+    private EditText inputEmail, inputPassword, inputName, inputIntroduction;
+    private Button btnSignUp, btnSignIn, btnResetPassword, btnUploadImage;
     private ProgressBar progressBar;
+    private RadioGroup radioGroup;
+    private RadioButton radioButton;
 
     // firebase
     private FirebaseAuth auth;
@@ -41,12 +45,16 @@ public class SignUpActivity extends AppCompatActivity {
         setContentView(R.layout.activity_sign_up);
 
         // View Reference
-        progressBar = (ProgressBar)findViewById(R.id.progressbar);
-        inputEmail = (EditText)findViewById(R.id.edit_text_email);
-        inputPassword = (EditText)findViewById(R.id.edit_text_password);
-        btnSignUp = (Button)findViewById(R.id.button_sign_up);
-        btnResetPassword = (Button)findViewById(R.id.button_password);
-        btnSignIn = (Button)findViewById(R.id.button_sign_in);
+        progressBar = (ProgressBar) findViewById(R.id.progressbar);
+        inputEmail = (EditText) findViewById(R.id.edit_text_email);
+        inputPassword = (EditText) findViewById(R.id.edit_text_password);
+        inputName = (EditText) findViewById(R.id.edit_text_name);
+        inputIntroduction = (EditText) findViewById(R.id.edit_text_introduction);
+        btnUploadImage = (Button) findViewById(R.id.button_sign_up_upload_image);
+        btnSignUp = (Button) findViewById(R.id.button_sign_up);
+        btnResetPassword = (Button) findViewById(R.id.button_password);
+        btnSignIn = (Button) findViewById(R.id.button_sign_in);
+        radioGroup = (RadioGroup) findViewById(R.id.radio_group);
 
         // Firebase Reference
         auth = FirebaseAuth.getInstance();
@@ -72,21 +80,25 @@ public class SignUpActivity extends AppCompatActivity {
         btnSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Get email, password
+                // Get information
                 String email = inputEmail.getText().toString().trim();
                 String password = inputPassword.getText().toString().trim();
+                String name = inputName.getText().toString().trim();
+                String introduction = inputIntroduction.getText().toString().trim();
+                radioButton = (RadioButton) findViewById(radioGroup.getCheckedRadioButtonId());
+                String gender = radioButton.getText().toString();
 
                 // Check Empty
-                if(TextUtils.isEmpty(email)){
+                if (TextUtils.isEmpty(email)) {
                     Toast.makeText(getApplicationContext(), "이메일를 입력해주세요!", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                if(TextUtils.isEmpty(password)){
+                if (TextUtils.isEmpty(password)) {
                     Toast.makeText(getApplicationContext(), "패스워드를 입력해주세요!", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 // Check Error
-                if(password.length()<6){
+                if (password.length() < 6) {
                     Toast.makeText(getApplicationContext(), "패스워드가 너무 짧습니다. 다시 입력해주세요!", Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -100,14 +112,15 @@ public class SignUpActivity extends AppCompatActivity {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 progressBar.setVisibility(View.GONE);
-                                if(!task.isSuccessful()){
+                                if (!task.isSuccessful()) {
                                     Toast.makeText(getApplicationContext(), "로그인에 실패하셨습니다.", Toast.LENGTH_SHORT);
-                                }else{
+                                } else {
                                     finish();
                                 }
                             }
                         });
             }
         });
+
     }
 }
