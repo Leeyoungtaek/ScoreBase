@@ -23,6 +23,7 @@
             android:id="@+id/edit_text_email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:text="ting4602@gmail.com"
             android:hint="@string/sign_email"
             android:inputType="textEmailAddress" />
     </android.support.design.widget.TextInputLayout>
@@ -35,6 +36,7 @@
         <EditText
             android:id="@+id/edit_text_password"
             android:layout_width="match_parent"
+            android:text="a6566190"
             android:layout_height="wrap_content"
             android:hint="@string/sign_password"
             android:inputType="textPassword" />
