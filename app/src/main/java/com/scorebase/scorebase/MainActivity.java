@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
     };
 
     // Profile Image to Bitmap
-    private Bitmap image_bitmap;
+    private Bitmap imageBitmap;
 
     // Firebase
     private FirebaseAuth auth;
@@ -58,34 +58,25 @@ public class MainActivity extends AppCompatActivity {
         // Firebase Reference
         auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();
-        storageReference = FirebaseStorage.getInstance().getReference().child("profile/" + auth.getCurrentUser().getEmail() + ".jpg");
+        storageReference = FirebaseStorage.getInstance().getReference().child("accounts/images/" + user.getUid() + ".jpg");
 
-        // Get Profile Image
-        Uri uri = user.getPhotoUrl();
-        if(uri != null){
-            mThread = new ImageLoadThread(mHandler, uri);
-            mThread.start();
-        }else{
-            image_bitmap = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.drawable.default_image);
-        }
+        // Image Download
+        storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                final Uri newUri = uri;
 
-//        // Image Download
-//        storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-//            @Override
-//            public void onSuccess(Uri uri) {
-//                final Uri newUri = uri;
-//
-//                // New Image Loading Thread
-//                mThread = new ImageLoadThread(mHandler, newUri);
-//                mThread.start();
-//            }
-//        }).addOnFailureListener(new OnFailureListener() {
-//            @Override
-//            public void onFailure(@NonNull Exception e) {
-//                // If Empty Set Default Image
-//                image_bitmap = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.drawable.ic_clear_black_48dp);
-//            }
-//        });
+                // New Image Loading Thread
+                mThread = new ImageLoadThread(mHandler, newUri);
+                mThread.start();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                // If Empty Set Default Image
+                imageBitmap = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.drawable.ic_clear_black_48dp);
+            }
+        });
 
         // Fragment Setting
         viewPager = (ViewPager) findViewById(R.id.viewpager);
@@ -100,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
         public void handleMessage(android.os.Message msg){
             // Image Loading Thread Message
             if(msg.what == 0){
-                image_bitmap = (Bitmap) msg.obj;
+                imageBitmap = (Bitmap) msg.obj;
                 Fragment frg = null;
 
                 // My Information Fragment
@@ -124,11 +115,11 @@ public class MainActivity extends AppCompatActivity {
         tabLayout.getTabAt(2).setIcon(tabIcons[2]);
     }
 
-    public void setImage_bitmap(Bitmap image_bitmap){
-        this.image_bitmap = image_bitmap;
+    public void setImageBitmap(Bitmap imageBitmap){
+        this.imageBitmap = imageBitmap;
     }
-    public Bitmap getImage_bitmap(){
-        return image_bitmap;
+    public Bitmap getImageBitmap(){
+        return imageBitmap;
     }
 
     // Setting ViewPager

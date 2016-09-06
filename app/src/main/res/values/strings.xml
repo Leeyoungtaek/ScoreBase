@@ -5,6 +5,7 @@
     <string name="sign_gender">Gender</string>
     <string name="sign_name">Name</string>
     <string name="sign_singin">Sign In</string>
+    <string name="sign_singup">Sign Up</string>
     <string name="sign_register">Register</string>
     <string name="sign_introduction">Introduction</string>
     <string name="sign_upload_button">Upload Image</string>

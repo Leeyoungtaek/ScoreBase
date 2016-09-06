@@ -42,12 +42,44 @@ public class SignInActivity extends AppCompatActivity {
         // Firebase Reference
         auth = FirebaseAuth.getInstance();
 
-        // Go to SingUpActivity
+        // Go to SingUpDetailActivity
         btnSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), SignUpActivity.class);
-                startActivity(intent);
+
+                // Get information
+                String email = inputEmail.getText().toString().trim();
+                String password = inputPassword.getText().toString().trim();
+
+                // Check Empty
+                if (TextUtils.isEmpty(email)) {
+                    Toast.makeText(getApplicationContext(), "이메일를 입력해주세요!", Toast.LENGTH_SHORT).show();
+                    return;
+                }else if (TextUtils.isEmpty(password)) {
+                    Toast.makeText(getApplicationContext(), "패스워드를 입력해주세요!", Toast.LENGTH_SHORT).show();
+                    return;
+                }else if (password.length() < 6) {
+                    Toast.makeText(getApplicationContext(), "패스워드가 너무 짧습니다. 다시 입력해주세요!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                // Loading ...
+                progressBar.setVisibility(View.VISIBLE);
+
+                // SingUp
+                auth.createUserWithEmailAndPassword(email, password)
+                        .addOnCompleteListener(SignInActivity.this, new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                progressBar.setVisibility(View.GONE);
+                                if (!task.isSuccessful()) {
+                                    Toast.makeText(getApplicationContext(), "회원가입에 실패하셨습니다.", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Intent intent = new Intent(getApplicationContext(), SignUpDetailActivity.class);
+                                    startActivity(intent);
+                                }
+                            }
+                        });
             }
         });
 
