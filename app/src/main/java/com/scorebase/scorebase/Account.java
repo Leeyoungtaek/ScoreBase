@@ -10,7 +10,7 @@ import java.util.ArrayList;
  * Created by DSM_055 on 2016-09-06.
  */
 @IgnoreExtraProperties
-public class User {
+public class Account {
 
     private String createdAt;
     private String displayName;
@@ -22,10 +22,10 @@ public class User {
     private String uid;
     private ArrayList<String> groups;
 
-    public User(){
+    public Account(){
     }
 
-    public User(String createdAt, String displayName, String email, String gender, String introduction, Uri photoURL, String providerId, String uid) {
+    public Account(String createdAt, String displayName, String email, String gender, String introduction, Uri photoURL, String providerId, String uid) {
         this.createdAt = createdAt;
         this.displayName = displayName;
         this.email = email;
@@ -34,6 +34,7 @@ public class User {
         this.photoURL = String.valueOf(photoURL);
         this.providerId = providerId;
         this.uid = uid;
+        groups = new ArrayList<String>();
     }
 
     public String getCreatedAt() {
