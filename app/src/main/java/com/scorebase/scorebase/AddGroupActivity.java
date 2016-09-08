@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -12,8 +13,13 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,9 +38,23 @@ public class AddGroupActivity extends AppCompatActivity {
     private RadioButton radioButton;
     private Button addButton;
 
+    // Strings
+    private String[] sportNames = new String[]{
+            "baseball",
+            "basketball",
+            "boxing",
+            "soccer",
+            "tennisball"
+    };
+
     // Firebase
+    private FirebaseAuth auth;
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference databaseReference;
+
+    // Class
+    private Group groupData;
+    private Member memberData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +69,7 @@ public class AddGroupActivity extends AppCompatActivity {
         mRecyclerView = (RecyclerView)findViewById(R.id.recycler_view);
 
         // Firebase Reference
+        auth = FirebaseAuth.getInstance();
         firebaseDatabase = FirebaseDatabase.getInstance();
         databaseReference = firebaseDatabase.getReference();
 
@@ -67,6 +88,7 @@ public class AddGroupActivity extends AppCompatActivity {
             public void onClick(View view) {
                 // Sports state check
                 boolean states[] = new boolean[5];
+
                 // Group Name
                 String groupName = editTextGroupName.getText().toString().trim();
 
@@ -93,7 +115,9 @@ public class AddGroupActivity extends AppCompatActivity {
                 }
 
                 // Save in Database
-                databaseReference.child("group").push().setValue(new Group(groupName, accessScope, states));
+                memberData = new Member("이영택", 5);
+                groupData = new Group(groupName, accessScope, states, memberData);
+                databaseReference.child("Group").child(groupName).setValue(groupData);
                 finish();
             }
         });
@@ -112,11 +136,11 @@ public class AddGroupActivity extends AppCompatActivity {
     // sports init
     private void initializeData(){
         sports = new ArrayList<>();
-        sports.add(new Sport(R.drawable.baseball, Group.sportNames[0]));
-        sports.add(new Sport(R.drawable.basketball, Group.sportNames[1]));
-        sports.add(new Sport(R.drawable.boxing, Group.sportNames[2]));
-        sports.add(new Sport(R.drawable.soccer, Group.sportNames[3]));
-        sports.add(new Sport(R.drawable.tennisball, Group.sportNames[4]));
+        sports.add(new Sport(R.drawable.baseball, sportNames[0]));
+        sports.add(new Sport(R.drawable.basketball, sportNames[1]));
+        sports.add(new Sport(R.drawable.boxing, sportNames[2]));
+        sports.add(new Sport(R.drawable.soccer, sportNames[3]));
+        sports.add(new Sport(R.drawable.tennisball, sportNames[4]));
     }
 
     // Sport Class

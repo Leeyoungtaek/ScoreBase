@@ -17,9 +17,9 @@ import java.util.List;
  */
 public class AddSportAdapter extends RecyclerView.Adapter<AddSportAdapter.SportViewHolder> {
 
-    List<AddGroupActivity.Sport> sports;
+    private List<AddGroupActivity.Sport> sports;
 
-    AddSportAdapter(List<AddGroupActivity.Sport> sports){
+    AddSportAdapter(List<AddGroupActivity.Sport> sports) {
         this.sports = sports;
     }
 
@@ -33,15 +33,15 @@ public class AddSportAdapter extends RecyclerView.Adapter<AddSportAdapter.SportV
     @Override
     public void onBindViewHolder(final SportViewHolder holder, final int position) {
         holder.sportImage.setImageResource(sports.get(position).imageId);
-        holder.cv.setOnClickListener(new View.OnClickListener() {
+        holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(holder.state==false){
-                    holder.state=true;
-                    holder.cv.setCardBackgroundColor(Color.GRAY);
-                }else{
-                    holder.state=false;
-                    holder.cv.setCardBackgroundColor(Color.WHITE);
+                if (holder.state == false) {
+                    holder.state = true;
+                    holder.cardView.setCardBackgroundColor(Color.GRAY);
+                } else {
+                    holder.state = false;
+                    holder.cardView.setCardBackgroundColor(Color.WHITE);
                 }
             }
         });
@@ -53,18 +53,18 @@ public class AddSportAdapter extends RecyclerView.Adapter<AddSportAdapter.SportV
     }
 
     public static class SportViewHolder extends RecyclerView.ViewHolder {
-        private CardView cv;
+        private CardView cardView;
         private ImageView sportImage;
         private boolean state;
 
-        SportViewHolder(View itemView){
+        SportViewHolder(View itemView) {
             super(itemView);
-            cv = (CardView)itemView.findViewById(R.id.card_view);
-            sportImage = (ImageView)itemView.findViewById(R.id.add_sport_image);
+            cardView = (CardView) itemView.findViewById(R.id.card_view);
+            sportImage = (ImageView) itemView.findViewById(R.id.add_sport_image);
             state = false;
         }
 
-        public boolean getState(){
+        public boolean getState() {
             return state;
         }
     }

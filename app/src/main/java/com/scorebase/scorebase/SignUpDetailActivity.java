@@ -11,6 +11,7 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -19,10 +20,13 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
@@ -38,6 +42,10 @@ public class SignUpDetailActivity extends AppCompatActivity {
 
     // Const
     public final static int PICK_FROM_GALLERY = 1001;
+    public final static String TAG = "SignUpDetailActivity";
+
+    // String
+    private String FILE_NAME;
 
     // Views
     private EditText inputName, inputIntroduction;
@@ -53,7 +61,7 @@ public class SignUpDetailActivity extends AppCompatActivity {
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference databaseReference;
 
-    // class
+    // Class
     private Account userData;
 
     @Override
@@ -132,9 +140,9 @@ public class SignUpDetailActivity extends AppCompatActivity {
                 progressBar.setVisibility(View.VISIBLE);
 
                 // Open Storage
-                String FILE_NAME = auth.getCurrentUser().getUid() + ".jpg";
+                FILE_NAME = auth.getCurrentUser().getUid() + ".jpg";
                 StorageReference storageReference = FirebaseStorage.getInstance().getReferenceFromUrl("gs://scorebase-6b4ac.appspot.com/");
-                final StorageReference profileImageRef = storageReference.child("accounts/images/" + FILE_NAME);
+                StorageReference profileImageRef = storageReference.child("accounts/images/" + FILE_NAME);
 
                 // Upload
                 UploadTask uploadTask = profileImageRef.putBytes(data);
@@ -151,13 +159,33 @@ public class SignUpDetailActivity extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(), "이미지 업로드에 성공하였습니다.", Toast.LENGTH_SHORT).show();
 
                         // Download
+                        StorageReference storageReference = FirebaseStorage.getInstance().getReferenceFromUrl("gs://scorebase-6b4ac.appspot.com/");
+                        StorageReference profileImageRef = storageReference.child("accounts/images/" + FILE_NAME);
                         profileImageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                             @Override
                             public void onSuccess(Uri uri) {
                                 Toast.makeText(getApplicationContext(), "이미지 다운로드에 성공하였습니다.", Toast.LENGTH_SHORT).show();
 
+
+                                user = FirebaseAuth.getInstance().getCurrentUser();
+
+                                // Save User Display Name
+                                UserProfileChangeRequest userProfileChangeRequest = new UserProfileChangeRequest.Builder()
+                                        .setDisplayName(name)
+                                        .setPhotoUri(uri)
+                                        .build();
+                                user.updateProfile(userProfileChangeRequest).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if(task.isSuccessful()){
+                                            Log.d(TAG, "onComplete: " + "isSuccessful");
+                                        }else{
+                                            Log.d(TAG, "onComplete: " + "isNotSuccessful");
+                                        }
+                                    }
+                                });
+
                                 // Save Data to Database
-                                user = auth.getCurrentUser();
                                 userData = new Account(createdAt, name, user.getEmail(), gender, introduction, uri, "password", user.getUid());
                                 databaseReference.child("accounts").child(user.getUid()).setValue(userData);
                                 progressBar.setVisibility(View.INVISIBLE);
