@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -27,7 +28,10 @@ import java.util.List;
 /**
  * Created by Lee young teak on 2016-08-25.
  */
-public class GroupFragment extends Fragment {
+public class GroupListFragment extends Fragment {
+
+    // Const
+    public final static int ADD_GROUP_REQUEST = 1001;
 
     // RecyclerView
     private RecyclerView mRecyclerView;
@@ -43,7 +47,7 @@ public class GroupFragment extends Fragment {
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference databaseReference;
 
-    public GroupFragment(){
+    public GroupListFragment() {
 
     }
 
@@ -63,8 +67,8 @@ public class GroupFragment extends Fragment {
         databaseReference = firebaseDatabase.getReference();
 
         // View Reference
-        floatingActionButton = (FloatingActionButton)view.findViewById(R.id.fab);
-        mRecyclerView = (RecyclerView)view.findViewById(R.id.recycler_view_groups);
+        floatingActionButton = (FloatingActionButton) view.findViewById(R.id.fab);
+        mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view_groups);
 
         // View Setting
         floatingActionButton.setColorNormalResId(R.color.colorAccent);
@@ -74,20 +78,7 @@ public class GroupFragment extends Fragment {
         mRecyclerView.setHasFixedSize(true);
         mLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(mLayoutManager);
-        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                Log.d("WWW", "onDataChange: " + dataSnapshot.getValue());
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-//        initializeData();
-        mAdapter = new GroupListAdapter(groups);
-        mRecyclerView.setAdapter(mAdapter);
+        initializeData();
 
 
         // Go to AddGroupActivity
@@ -95,14 +86,49 @@ public class GroupFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getContext(), AddGroupActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent, ADD_GROUP_REQUEST);
             }
         });
         return view;
     }
 
-//    // Groups init
-//    private void initializeData(){
-//
-//    }
+    // Groups init
+    private void initializeData() {
+        groups = new ArrayList<Group>();
+        databaseReference.child("Group").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot child : dataSnapshot.getChildren()) {
+                    Group group = child.getValue(Group.class);
+                    for (int i = 0; i < group.Members.size(); i++) {
+                        if (group.Members.get(i).getName().equals("이영택")) {
+                            groups.add(group);
+                        }
+                    }
+                }
+                mAdapter = new GroupListAdapter(getContext(), groups);
+                mRecyclerView.setAdapter(mAdapter);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == ADD_GROUP_REQUEST) {
+            if (resultCode == getActivity().RESULT_OK) {
+                Fragment frg = null;
+                frg = getActivity().getSupportFragmentManager().findFragmentByTag("android:switcher:" + ((MainActivity) getActivity()).viewPager.getId() + ":" + 0);
+                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                ft.detach(frg);
+                ft.attach(frg);
+                ft.commit();
+            }
+        }
+    }
 }

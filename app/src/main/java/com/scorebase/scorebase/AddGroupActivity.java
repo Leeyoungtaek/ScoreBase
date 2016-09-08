@@ -1,6 +1,7 @@
 package com.scorebase.scorebase;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -118,6 +119,7 @@ public class AddGroupActivity extends AppCompatActivity {
                 memberData = new Member("이영택", 5);
                 groupData = new Group(groupName, accessScope, states, memberData);
                 databaseReference.child("Group").child(groupName).setValue(groupData);
+                setResult(RESULT_OK);
                 finish();
             }
         });

@@ -1,5 +1,6 @@
 package com.scorebase.scorebase;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -28,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
 
     // Views
     private TabLayout tabLayout;
-    private ViewPager viewPager;
+    public ViewPager viewPager;
 
     // Fragment
     private FragmentManager mFragmentManager;
@@ -98,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
                 frg = getSupportFragmentManager().findFragmentByTag("android:switcher:" + viewPager.getId() + ":" + 2);
 
                 // If CurrentItem is Fragment then Refresh
-                if(viewPager.getCurrentItem()==2){
+                if(viewPager.getCurrentItem()==2||viewPager.getCurrentItem()==1){
                     final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
                     ft.detach(frg);
                     ft.attach(frg);
@@ -126,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
     private void setupViewPager(ViewPager viewPager) {
         mFragmentManager = getSupportFragmentManager();
         adapter = new ViewPagerAdapter(mFragmentManager);
-        adapter.addFragment(new GroupFragment());
+        adapter.addFragment(new GroupListFragment());
         adapter.addFragment(new NewsFeedFragment());
         adapter.addFragment(new MyInformationFragment());
         viewPager.setAdapter(adapter);

@@ -1,5 +1,7 @@
 package com.scorebase.scorebase;
 
+import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -7,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -15,8 +18,10 @@ import java.util.List;
 public class GroupListAdapter extends RecyclerView.Adapter<GroupListAdapter.GroupViewHolder> {
 
     private List<Group> groups;
+    private Context context;
 
-    GroupListAdapter(List<Group> groups){
+    GroupListAdapter(Context context, List<Group> groups){
+        this.context = context;
         this.groups = groups;
     }
 
@@ -32,11 +37,20 @@ public class GroupListAdapter extends RecyclerView.Adapter<GroupListAdapter.Grou
     public void onBindViewHolder(GroupViewHolder holder, int position) {
         holder.groupName.setText(groups.get(position).getName());
         holder.accessScope.setText(groups.get(position).getAccessScope());
+        final Group group = groups.get(position);
+        holder.cardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(context, GroupActivity.class);
+                intent.putExtra("group", (Serializable) group);
+                context.startActivity(intent);
+            }
+        });
     }
 
     @Override
     public int getItemCount() {
-        return 0;
+        return groups.size();
     }
 
     public class GroupViewHolder extends RecyclerView.ViewHolder{
@@ -49,6 +63,7 @@ public class GroupListAdapter extends RecyclerView.Adapter<GroupListAdapter.Grou
             super(itemView);
             groupName = (TextView)itemView.findViewById(R.id.text_view_group_name);
             accessScope = (TextView)itemView.findViewById(R.id.text_view_access_scope);
+            cardView = (CardView)itemView.findViewById(R.id.card_view_group_card);
         }
     }
 }
