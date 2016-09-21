@@ -23,4 +23,5 @@
     <dimen name="height_add_group_recycler_view">180dp</dimen>
     <dimen name="margin_add_group_edit_text">16dp</dimen>
     <dimen name="margin_sign_radio_group">16dp</dimen>
+    <dimen name="width_card">170dp</dimen>
 </resources>

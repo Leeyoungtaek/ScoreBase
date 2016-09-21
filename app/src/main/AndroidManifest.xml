@@ -24,6 +24,8 @@
         <activity android:name=".ForgotPasswordActivity"></activity>
         <activity android:name=".AddGroupActivity"></activity>
         <activity android:name=".GroupActivity"></activity>
+        <activity android:name=".Board.GamesActivity"></activity>
+        <activity android:name=".Board.ScoreBoardActivity"></activity>
     </application>
 
 </manifest>

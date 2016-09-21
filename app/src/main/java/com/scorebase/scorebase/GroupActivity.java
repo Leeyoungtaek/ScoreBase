@@ -8,6 +8,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.melnykov.fab.FloatingActionButton;
+import com.scorebase.scorebase.Board.GamesActivity;
+import com.scorebase.scorebase.Board.ScoreBoardActivity;
 
 public class GroupActivity extends AppCompatActivity {
 
@@ -42,7 +44,9 @@ public class GroupActivity extends AppCompatActivity {
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getApplicationContext(), "Click", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getApplicationContext(), GamesActivity.class);
+                intent.putStringArrayListExtra("sport", group.Sports);
+                startActivity(intent);
             }
         });
     }
