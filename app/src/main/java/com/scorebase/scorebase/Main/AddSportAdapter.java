@@ -1,14 +1,14 @@
-package com.scorebase.scorebase;
+package com.scorebase.scorebase.Main;
 
 import android.graphics.Color;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.Toast;
+
+import com.scorebase.scorebase.R;
 
 import java.util.List;
 
@@ -18,9 +18,11 @@ import java.util.List;
 public class AddSportAdapter extends RecyclerView.Adapter<AddSportAdapter.SportViewHolder> {
 
     private List<AddGroupActivity.Sport> sports;
+    private SelectGameListener listener;
 
-    AddSportAdapter(List<AddGroupActivity.Sport> sports) {
+    AddSportAdapter(List<AddGroupActivity.Sport> sports, SelectGameListener listener) {
         this.sports = sports;
+        this.listener = listener;
     }
 
     @Override
@@ -36,6 +38,7 @@ public class AddSportAdapter extends RecyclerView.Adapter<AddSportAdapter.SportV
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                listener.selectGameEvent(position);
                 if (holder.state == false) {
                     holder.state = true;
                     holder.cardView.setCardBackgroundColor(Color.GRAY);

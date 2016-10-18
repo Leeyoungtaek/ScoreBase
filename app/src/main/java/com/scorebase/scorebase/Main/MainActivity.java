@@ -1,6 +1,5 @@
-package com.scorebase.scorebase;
+package com.scorebase.scorebase.Main;
 
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -21,86 +20,51 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.scorebase.scorebase.Main.Fragment.GroupListFragment;
+import com.scorebase.scorebase.Thread.ImageLoadThread;
+import com.scorebase.scorebase.Main.Fragment.MyInformationFragment;
+import com.scorebase.scorebase.Main.Fragment.NewsFeedFragment;
+import com.scorebase.scorebase.R;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    // Views
+    // View
     private TabLayout tabLayout;
     public ViewPager viewPager;
 
-    // Fragment
+    // View:Fragment
     private FragmentManager mFragmentManager;
     private ViewPagerAdapter adapter;
-    private int[] tabIcons ={
+
+    // FireBase
+    private FirebaseAuth auth;
+    private StorageReference storageReference;
+    private FirebaseUser user;
+
+    // Data
+    private Bitmap imageBitmap;
+    private int[] tabIcons = {
             R.drawable.ic_view_module_black_24dp,
             R.drawable.ic_forum_black_24dp,
             R.drawable.ic_face_black_24dp
     };
 
-    // Profile Image to Bitmap
-    private Bitmap imageBitmap;
-
-    // Firebase
-    private FirebaseAuth auth;
-    private StorageReference storageReference;
-    private FirebaseUser user;
-
-    // Thread for loading image
+    // Thread
     private ImageLoadThread mThread;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        // Firebase Reference
-        auth = FirebaseAuth.getInstance();
-        user = auth.getCurrentUser();
-        storageReference = FirebaseStorage.getInstance().getReference().child("accounts/images/" + user.getUid() + ".jpg");
-
-        // Image Download
-        storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-            @Override
-            public void onSuccess(Uri uri) {
-                final Uri newUri = uri;
-
-                // New Image Loading Thread
-                mThread = new ImageLoadThread(mHandler, newUri);
-                mThread.start();
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                // If Empty Set Default Image
-                imageBitmap = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.drawable.ic_clear_black_48dp);
-            }
-        });
-
-        // Fragment Setting
-        viewPager = (ViewPager) findViewById(R.id.viewpager);
-        setupViewPager(viewPager);
-        tabLayout = (TabLayout) findViewById(R.id.tabs);
-        tabLayout.setupWithViewPager(viewPager);
-        setupTabIcons();
-    }
 
     // Handler
     Handler mHandler = new Handler() {
-        public void handleMessage(android.os.Message msg){
-            // Image Loading Thread Message
-            if(msg.what == 0){
+        public void handleMessage(android.os.Message msg) {
+            if (msg.what == 0) {
                 imageBitmap = (Bitmap) msg.obj;
-                Fragment frg = null;
 
-                // My Information Fragment
-                frg = getSupportFragmentManager().findFragmentByTag("android:switcher:" + viewPager.getId() + ":" + 2);
+                Fragment frg = getSupportFragmentManager().findFragmentByTag("android:switcher:" + viewPager.getId() + ":" + 2);
 
-                // If CurrentItem is Fragment then Refresh
-                if(viewPager.getCurrentItem()==2||viewPager.getCurrentItem()==1){
-                    final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                if (viewPager.getCurrentItem() != 0) {
+                    FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
                     ft.detach(frg);
                     ft.attach(frg);
                     ft.commit();
@@ -109,21 +73,54 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    // Set TabLayout Icon
-    private void setupTabIcons(){
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        // View Reference & Set
+        viewPager = (ViewPager) findViewById(R.id.viewpager);
+        setupViewPager(viewPager);
+        tabLayout = (TabLayout) findViewById(R.id.tabs);
+        tabLayout.setupWithViewPager(viewPager);
+        setupTabIcons();
+
+        // FireBase Reference
+        auth = FirebaseAuth.getInstance();
+        user = auth.getCurrentUser();
+        storageReference = FirebaseStorage.getInstance().getReference().child("accounts/images/" + user.getUid() + ".jpg");
+
+        // FireBase Event
+        storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                final Uri newUri = uri;
+
+                mThread = new ImageLoadThread(mHandler, newUri);
+                mThread.start();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                imageBitmap = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.drawable.ic_clear_black_48dp);
+            }
+        });
+    }
+
+    private void setupTabIcons() {
         tabLayout.getTabAt(0).setIcon(tabIcons[0]);
         tabLayout.getTabAt(1).setIcon(tabIcons[1]);
         tabLayout.getTabAt(2).setIcon(tabIcons[2]);
     }
 
-    public void setImageBitmap(Bitmap imageBitmap){
+    public void setImageBitmap(Bitmap imageBitmap) {
         this.imageBitmap = imageBitmap;
     }
-    public Bitmap getImageBitmap(){
+
+    public Bitmap getImageBitmap() {
         return imageBitmap;
     }
 
-    // Setting ViewPager
     private void setupViewPager(ViewPager viewPager) {
         mFragmentManager = getSupportFragmentManager();
         adapter = new ViewPagerAdapter(mFragmentManager);
@@ -133,7 +130,6 @@ public class MainActivity extends AppCompatActivity {
         viewPager.setAdapter(adapter);
     }
 
-    // ViewPagerAdapter
     class ViewPagerAdapter extends FragmentPagerAdapter {
         private final List<Fragment> mFragmentList = new ArrayList<>();
 

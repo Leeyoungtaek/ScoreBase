@@ -12,18 +12,18 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".SignInActivity">
+        <activity android:name=".Sign.SignInActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".SignUpDetailActivity"></activity>
-        <activity android:name=".MainActivity"></activity>
-        <activity android:name=".ForgotPasswordActivity"></activity>
-        <activity android:name=".AddGroupActivity"></activity>
-        <activity android:name=".GroupActivity"></activity>
+        <activity android:name=".Sign.SignUpDetailActivity"></activity>
+        <activity android:name=".Main.MainActivity"></activity>
+        <activity android:name=".Sign.ForgotPasswordActivity"></activity>
+        <activity android:name=".Main.AddGroupActivity"></activity>
+        <activity android:name=".Main.Group.GroupActivity"></activity>
         <activity android:name=".Board.GamesActivity"></activity>
         <activity android:name=".Board.ScoreBoardActivity"></activity>
     </application>

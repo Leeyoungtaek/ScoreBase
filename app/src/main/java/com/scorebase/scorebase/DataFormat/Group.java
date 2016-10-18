@@ -1,4 +1,4 @@
-package com.scorebase.scorebase;
+package com.scorebase.scorebase.DataFormat;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -14,10 +14,10 @@ import java.util.ArrayList;
  */
 @IgnoreExtraProperties
 public class Group implements Serializable, Parcelable{
-    private String Name;
-    private String AccessScope;
-    public ArrayList<String> Sports;
-    public ArrayList<Member> Members;
+    private String name;
+    private String accessScope;
+    public ArrayList<String> sports;
+    public ArrayList<Member> members;
 
     private String[] sportNames = new String[]{
             "baseball",
@@ -30,49 +30,49 @@ public class Group implements Serializable, Parcelable{
     Group(){
     }
 
-    Group(String Name, String AccesssScope, boolean[] states, Member member){
-        Sports = new ArrayList<String>();
-        Members = new ArrayList<Member>();
-        this.Name = Name;
-        this.AccessScope = AccesssScope;
+    public Group(String Name, String AccesssScope, boolean[] states, Member member){
+        sports = new ArrayList<String>();
+        members = new ArrayList<Member>();
+        this.name = Name;
+        this.accessScope = AccesssScope;
 
         for (int i = 0; i<states.length; i++){
             if(states[i]){
-                Sports.add(sportNames[i]);
+                sports.add(sportNames[i]);
             }
         }
 
-        Members.add(member);
+        members.add(member);
     }
 
     protected Group(Parcel in) {
-        Name = in.readString();
-        AccessScope = in.readString();
-        Sports = in.createStringArrayList();
+        name = in.readString();
+        accessScope = in.readString();
+        sports = in.createStringArrayList();
         sportNames = in.createStringArray();
     }
 
     public void addSport(String sport){
-        if(!Sports.contains(sport)){
-            Sports.add(sport);
+        if(!sports.contains(sport)){
+            sports.add(sport);
         }
         return;
     }
 
     public String getName() {
-        return Name;
+        return name;
     }
 
     public void setName(String name) {
-        Name = name;
+        this.name = name;
     }
 
     public String getAccessScope() {
-        return AccessScope;
+        return accessScope;
     }
 
     public void setAccessScope(String accessScope) {
-        AccessScope = accessScope;
+        this.accessScope = accessScope;
     }
 
     public static final Creator<Group> CREATOR = new Creator<Group>() {
@@ -94,9 +94,9 @@ public class Group implements Serializable, Parcelable{
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeString(Name);
-        parcel.writeString(AccessScope);
-        parcel.writeStringList(Sports);
+        parcel.writeString(name);
+        parcel.writeString(accessScope);
+        parcel.writeStringList(sports);
         parcel.writeStringArray(sportNames);
     }
 }

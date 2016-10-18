@@ -1,4 +1,4 @@
-package com.scorebase.scorebase;
+package com.scorebase.scorebase.Thread;
 
 
 import android.graphics.Bitmap;
@@ -13,48 +13,40 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-/**
- * Created by DSM_055 on 2016-08-30.
- * Image DownLoad Thread
- */
 public class ImageLoadThread extends Thread {
 
-    private Handler mHandler;
+    private Handler handler;
     private Uri uri;
 
-    public ImageLoadThread(Handler handler, Uri uri){
-        mHandler = handler;
+    public ImageLoadThread(Handler handler, Uri uri) {
+        this.handler = handler;
         this.uri = uri;
     }
 
     @Override
     public void run() {
-        // Set Message
         Message msg = Message.obtain();
         msg.what = 0;
         msg.obj = getImageFromFirebase(uri);
 
-        // Send Message
-        mHandler.sendMessage(msg);
+        handler.sendMessage(msg);
     }
 
-    // Get Bitmap from Uri
-    private Bitmap getImageFromFirebase(Uri uri){
+    private Bitmap getImageFromFirebase(Uri uri) {
         URL url = null;
         Bitmap bitmap = null;
         try {
-            // Download
             url = new URL(uri.toString());
-            HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setDoInput(true);
             connection.connect();
             InputStream in = connection.getInputStream();
-            bitmap =  BitmapFactory.decodeStream(in);
+            bitmap = BitmapFactory.decodeStream(in);
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return bitmap;

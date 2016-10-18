@@ -14,32 +14,24 @@ import com.scorebase.scorebase.R;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by DSM_055 on 2016-07-22.
- * 무슨 게임의 카운트를 셀지 고르는 Activity 다.
- */
-
 public class GamesActivity extends AppCompatActivity {
 
-    // RecyclerView related
+    // View:RecyclerView
     private RecyclerView recyclerView;
     private CustomLayoutManager linearLayoutManager;
     private RecyclerAdapter recyclerAdapter;
 
-    // CardView Item related
+    // Data
     private List<GamesItem> items = new ArrayList<>();
-    private GamesItem[] item;
+    private ArrayList<String> sports;
 
-    // Display related
+    // Data:Display
     private Point size;
     private Display display;
 
-    // width related
+    // Data:Width
     private float padding;
     private float itemWidth;
-
-    // Data
-    private ArrayList<String> sports;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,51 +39,47 @@ public class GamesActivity extends AppCompatActivity {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
         setContentView(R.layout.activity_games);
 
-        // get Intent
+        // Intent & Init
         Intent intent = getIntent();
         sports = intent.getStringArrayListExtra("sport");
 
-        // get padding, itemWidth
         display = getWindowManager().getDefaultDisplay();
         size = new Point();
         display.getSize(size);
         itemWidth = getResources().getDimension(R.dimen.width_card);
         padding = (size.x - itemWidth) / 2;
 
-        // GamesItem 내용물
-        item = new GamesItem[sports.size()];
+        // View Reference
+        recyclerView = (RecyclerView) findViewById(R.id.recycler);
+
+        // View Set
         for (int i = 0; i < sports.size(); i++) {
             switch (sports.get(i)){
                 case "baseball":
-                    item[i] = new GamesItem(R.drawable.baseball, "Baseball");
+                    items.add(new GamesItem(R.drawable.baseball, "Baseball"));
                     break;
                 case "basketball":
-                    item[i] = new GamesItem(R.drawable.basketball, "Basketball");
+                    items.add(new GamesItem(R.drawable.basketball, "Basketball"));
                     break;
                 case "boxing":
-                    item[i] = new GamesItem(R.drawable.boxing, "Boxing");
+                    items.add(new GamesItem(R.drawable.boxing, "Boxing"));
                     break;
                 case "soccer":
-                    item[i] = new GamesItem(R.drawable.soccer, "Soccer");
+                    items.add(new GamesItem(R.drawable.soccer, "Soccer"));
                     break;
                 case "tennisball":
-                    item[i] = new GamesItem(R.drawable.tennisball, "Tennisball");
+                    items.add(new GamesItem(R.drawable.tennisball, "Tennisball"));
                     break;
                 default :
                     break;
             }
         }
-
-        // items 리스트 만들기
-        for (int i = 0; i < sports.size(); i++)
-            items.add(item[i]);
-
-        // RecyclerAdapter, LayoutManager 인스턴스화
         recyclerAdapter = new RecyclerAdapter(getApplicationContext(), items);
         linearLayoutManager = new CustomLayoutManager(getApplicationContext(), LinearLayoutManager.HORIZONTAL, (int) padding);
+        recyclerView.setAdapter(recyclerAdapter);
+        recyclerView.setLayoutManager(linearLayoutManager);
 
-        // RecyclerView 설정
-        recyclerView = (RecyclerView) findViewById(R.id.recycler);
+        // View Event
         recyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
             private boolean isComputed = false;
 
@@ -114,8 +102,5 @@ public class GamesActivity extends AppCompatActivity {
                 super.onScrollStateChanged(recyclerView, newState);
             }
         });
-        // Adapter, LayoutManager set
-        recyclerView.setAdapter(recyclerAdapter);
-        recyclerView.setLayoutManager(linearLayoutManager);
     }
 }

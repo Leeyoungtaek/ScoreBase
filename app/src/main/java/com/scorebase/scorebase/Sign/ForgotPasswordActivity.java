@@ -1,4 +1,4 @@
-package com.scorebase.scorebase;
+package com.scorebase.scorebase.Sign;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -13,15 +13,15 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.scorebase.scorebase.R;
 
 public class ForgotPasswordActivity extends AppCompatActivity {
 
-    // Views
+    // View
     private EditText inputEmail;
     private Button btnResetPassword, btnBack;
-    private ProgressBar progressBar;
 
-    // Firebase
+    // FireBase
     private FirebaseAuth auth;
 
     @Override
@@ -30,18 +30,17 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         setContentView(R.layout.activity_forgot_password);
 
         // View Reference
-        progressBar = (ProgressBar)findViewById(R.id.progressbar);
-        inputEmail = (EditText)findViewById(R.id.edit_text_email);
-        btnResetPassword = (Button)findViewById(R.id.button_reset_password);
-        btnBack = (Button)findViewById(R.id.button_back);
+        inputEmail = (EditText) findViewById(R.id.edit_text_email);
+        btnResetPassword = (Button) findViewById(R.id.button_reset_password);
+        btnBack = (Button) findViewById(R.id.button_back);
 
-        // Firebase Reference
+        // FireBase Reference
         auth = FirebaseAuth.getInstance();
 
-        // View setting
+        // View Set
         btnBack.setText("<<BACK");
 
-        // Go to Back
+        // View Event
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -49,34 +48,26 @@ public class ForgotPasswordActivity extends AppCompatActivity {
             }
         });
 
-        // Send ResetPassword email
         btnResetPassword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Get email
                 String email = inputEmail.getText().toString().trim();
 
-                // Check Empty
-                if(TextUtils.isEmpty(email)){
+                if (TextUtils.isEmpty(email)) {
                     Toast.makeText(getApplicationContext(), "이메일을 입력해주세요!", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
-                // Loading ...
-                progressBar.setVisibility(View.VISIBLE);
-
-                // Send email for reset password
                 auth.sendPasswordResetEmail(email)
                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
-                                if(task.isSuccessful()){
+                                if (task.isSuccessful()) {
                                     Toast.makeText(getApplicationContext(), "이메일을 확인해주세요!", Toast.LENGTH_LONG).show();
                                     finish();
-                                }else{
+                                } else {
                                     Toast.makeText(getApplicationContext(), "이메일에 보내는 것을 실패했습니다.", Toast.LENGTH_SHORT).show();
                                 }
-                                progressBar.setVisibility(View.GONE);
                             }
                         });
             }

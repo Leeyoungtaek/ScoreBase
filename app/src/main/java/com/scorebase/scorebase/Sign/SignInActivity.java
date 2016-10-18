@@ -1,10 +1,11 @@
-package com.scorebase.scorebase;
+package com.scorebase.scorebase.Sign;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -15,15 +16,16 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.scorebase.scorebase.Main.MainActivity;
+import com.scorebase.scorebase.R;
 
 public class SignInActivity extends AppCompatActivity {
 
-    // Views
+    // View
     private Button btnSignIn, btnResetPassword, btnSignUp;
     private EditText inputEmail, inputPassword;
-    private ProgressBar progressBar;
 
-    // Firebase
+    // FireBase
     private FirebaseAuth auth;
 
     @Override
@@ -32,58 +34,40 @@ public class SignInActivity extends AppCompatActivity {
         setContentView(R.layout.activity_sign_in);
 
         // View Reference
-        progressBar = (ProgressBar)findViewById(R.id.progressbar);
-        inputEmail = (EditText)findViewById(R.id.edit_text_email);
-        inputPassword = (EditText)findViewById(R.id.edit_text_password);
-        btnSignIn = (Button)findViewById(R.id.button_sign_in);
-        btnResetPassword = (Button)findViewById(R.id.button_password);
-        btnSignUp = (Button)findViewById(R.id.button_sign_up);
+        inputEmail = (EditText) findViewById(R.id.edit_text_email);
+        inputPassword = (EditText) findViewById(R.id.edit_text_password);
+        btnSignIn = (Button) findViewById(R.id.button_sign_in);
+        btnResetPassword = (Button) findViewById(R.id.button_password);
+        btnSignUp = (Button) findViewById(R.id.button_sign_up);
 
-        // Firebase Reference
+        // FireBase Reference
         auth = FirebaseAuth.getInstance();
 
-        // Go to SingUpDetailActivity
+        // View Event
         btnSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                // Get information
                 String email = inputEmail.getText().toString().trim();
                 String password = inputPassword.getText().toString().trim();
 
-                // Check Empty
                 if (TextUtils.isEmpty(email)) {
                     Toast.makeText(getApplicationContext(), "이메일를 입력해주세요!", Toast.LENGTH_SHORT).show();
                     return;
-                }else if (TextUtils.isEmpty(password)) {
+                } else if (TextUtils.isEmpty(password)) {
                     Toast.makeText(getApplicationContext(), "패스워드를 입력해주세요!", Toast.LENGTH_SHORT).show();
                     return;
-                }else if (password.length() < 6) {
+                } else if (password.length() < 6) {
                     Toast.makeText(getApplicationContext(), "패스워드가 너무 짧습니다. 다시 입력해주세요!", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
-                // Loading ...
-                progressBar.setVisibility(View.VISIBLE);
-
-                // SingUp
-                auth.createUserWithEmailAndPassword(email, password)
-                        .addOnCompleteListener(SignInActivity.this, new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                progressBar.setVisibility(View.GONE);
-                                if (!task.isSuccessful()) {
-                                    Toast.makeText(getApplicationContext(), "회원가입에 실패하셨습니다.", Toast.LENGTH_SHORT).show();
-                                } else {
-                                    Intent intent = new Intent(getApplicationContext(), SignUpDetailActivity.class);
-                                    startActivity(intent);
-                                }
-                            }
-                        });
+                Intent intent = new Intent(getApplicationContext(), SignUpDetailActivity.class);
+                intent.putExtra("email", email);
+                intent.putExtra("password", password);
+                startActivity(intent);
             }
         });
 
-        // Go to ForgotPasswordActivity
         btnResetPassword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -92,41 +76,29 @@ public class SignInActivity extends AppCompatActivity {
             }
         });
 
-        // SignIn
         btnSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Get email, password
-                String email = inputEmail.getText().toString();
-                final String password = inputPassword.getText().toString();
+                String email = inputEmail.getText().toString().trim();
+                final String password = inputPassword.getText().toString().trim();
 
-                // Check Empty
-                if(TextUtils.isEmpty(email)){
+                if (TextUtils.isEmpty(email)) {
                     Toast.makeText(getApplicationContext(), "이메일을 입력해주세요!", Toast.LENGTH_SHORT).show();
                     return;
-                }
-                if(TextUtils.isEmpty(password)){
+                } else if (TextUtils.isEmpty(password)) {
                     Toast.makeText(getApplicationContext(), "패스워드를 입력해주세요!", Toast.LENGTH_SHORT).show();
                     return;
+                } else if (password.length() < 6) {
+                    inputPassword.setError("패스워드가 너무 짧습니다. 다시 입력해주세요!");
                 }
 
-                // Loading ...
-                progressBar.setVisibility(View.VISIBLE);
-
-                // SignIn
                 auth.signInWithEmailAndPassword(email, password)
                         .addOnCompleteListener(SignInActivity.this, new OnCompleteListener<AuthResult>() {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
-                                progressBar.setVisibility(View.GONE);
-                                // Error Check
-                                if(!task.isSuccessful()){
-                                    if(password.length()<6){
-                                        inputPassword.setError("패스워드가 너무 짧습니다. 다시 입력해주세요!");
-                                    }else{
-                                        Toast.makeText(getApplicationContext(), "로그인에 실패하였습니다.", Toast.LENGTH_LONG).show();
-                                    }
-                                }else{
+                                if (!task.isSuccessful()) {
+                                    Toast.makeText(SignInActivity.this, "로그인 실패", Toast.LENGTH_SHORT).show();
+                                } else {
                                     Intent intent = new Intent(SignInActivity.this, MainActivity.class);
                                     startActivity(intent);
                                     finish();

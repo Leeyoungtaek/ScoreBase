@@ -1,4 +1,4 @@
-package com.scorebase.scorebase;
+package com.scorebase.scorebase.Main.Fragment;
 
 import android.content.Context;
 import android.content.Intent;
@@ -8,6 +8,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.scorebase.scorebase.DataFormat.Group;
+import com.scorebase.scorebase.Main.Group.GroupActivity;
+import com.scorebase.scorebase.R;
 
 import java.io.Serializable;
 import java.util.List;
@@ -24,7 +28,6 @@ public class GroupListAdapter extends RecyclerView.Adapter<GroupListAdapter.Grou
         this.context = context;
         this.groups = groups;
     }
-
 
     @Override
     public GroupViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {

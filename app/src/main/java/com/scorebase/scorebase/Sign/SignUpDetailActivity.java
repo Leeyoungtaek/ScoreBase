@@ -1,4 +1,4 @@
-package com.scorebase.scorebase;
+package com.scorebase.scorebase.Sign;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -24,6 +24,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
@@ -32,6 +33,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.scorebase.scorebase.DataFormat.Account;
+import com.scorebase.scorebase.R;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -42,26 +45,26 @@ public class SignUpDetailActivity extends AppCompatActivity {
 
     // Const
     public final static int PICK_FROM_GALLERY = 1001;
-    public final static String TAG = "SignUpDetailActivity";
 
-    // String
-    private String FILE_NAME;
-
-    // Views
+    // View
     private EditText inputName, inputIntroduction;
     private Button btnSignUp, btnBack, btnUploadImage;
-    private ProgressBar progressBar;
     private RadioGroup radioGroup;
     private RadioButton radioButton;
     private CircleImageView imageView;
 
-    // firebase
+    // FireBase
     private FirebaseAuth auth;
     private FirebaseUser user;
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference databaseReference;
+    private StorageReference storageReference;
+    private StorageReference profileImageRef;
 
-    // Class
+    // Data
+    private String email;
+    private String password;
+    private String fileName;
     private Account userData;
 
     @Override
@@ -69,8 +72,12 @@ public class SignUpDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up_detail);
 
+        // Intent
+        Intent intent = getIntent();
+        email = intent.getStringExtra("email");
+        password = intent.getStringExtra("password");
+
         // View Reference
-        progressBar = (ProgressBar) findViewById(R.id.progressbar);
         inputName = (EditText) findViewById(R.id.edit_text_name);
         inputIntroduction = (EditText) findViewById(R.id.edit_text_introduction);
         btnUploadImage = (Button) findViewById(R.id.button_sign_up_upload_image);
@@ -80,17 +87,17 @@ public class SignUpDetailActivity extends AppCompatActivity {
         radioGroup = (RadioGroup) findViewById(R.id.radio_group_sign_up);
         imageView = (CircleImageView) findViewById(R.id.sing_up_image);
 
-        // View setting
+        // View Set
         radioButton.setChecked(true);
         Bitmap image = BitmapFactory.decodeResource(getResources(), R.drawable.default_image);
         imageView.setImageBitmap(image);
 
-        // Firebase Reference
+        // FireBase Reference
         auth = FirebaseAuth.getInstance();
         firebaseDatabase = FirebaseDatabase.getInstance();
         databaseReference = firebaseDatabase.getReference();
 
-        // Upload Image
+        // View Event
         btnUploadImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -101,7 +108,6 @@ public class SignUpDetailActivity extends AppCompatActivity {
             }
         });
 
-        // Go to SignInActivity
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -109,25 +115,22 @@ public class SignUpDetailActivity extends AppCompatActivity {
             }
         });
 
-        // SignUp
         btnSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                // Get information
                 final String createdAt = String.valueOf(System.currentTimeMillis());
                 final String name = inputName.getText().toString().trim();
                 final String introduction = inputIntroduction.getText().toString().trim();
+
                 int Id = radioGroup.getCheckedRadioButtonId();
                 radioButton = (RadioButton) findViewById(Id);
                 final String gender = radioButton.getText().toString();
+
                 Bitmap image = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 image.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-                byte[] data = baos.toByteArray();
+                final byte[] data = baos.toByteArray();
 
-
-                // Check Empty
                 if (TextUtils.isEmpty(name)) {
                     Toast.makeText(getApplicationContext(), "이름을 입력해주세요", Toast.LENGTH_SHORT).show();
                     return;
@@ -136,69 +139,48 @@ public class SignUpDetailActivity extends AppCompatActivity {
                     return;
                 }
 
-                // Loading ...
-                progressBar.setVisibility(View.VISIBLE);
-
-                // Open Storage
-                FILE_NAME = auth.getCurrentUser().getUid() + ".jpg";
-                StorageReference storageReference = FirebaseStorage.getInstance().getReferenceFromUrl("gs://scorebase-6b4ac.appspot.com/");
-                StorageReference profileImageRef = storageReference.child("accounts/images/" + FILE_NAME);
-
-                // Upload
-                UploadTask uploadTask = profileImageRef.putBytes(data);
-                uploadTask.addOnFailureListener(new OnFailureListener() {
+                auth.createUserWithEmailAndPassword(email, password).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                     @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(getApplicationContext(), "이미지 업로드에 실패하였습니다.", Toast.LENGTH_SHORT).show();
-                        progressBar.setVisibility(View.INVISIBLE);
-                        return;
-                    }
-                }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        Toast.makeText(getApplicationContext(), "이미지 업로드에 성공하였습니다.", Toast.LENGTH_SHORT).show();
+                    public void onSuccess(AuthResult authResult) {
+                        user = auth.getCurrentUser();
 
-                        // Download
-                        StorageReference storageReference = FirebaseStorage.getInstance().getReferenceFromUrl("gs://scorebase-6b4ac.appspot.com/");
-                        StorageReference profileImageRef = storageReference.child("accounts/images/" + FILE_NAME);
-                        profileImageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        fileName = auth.getCurrentUser().getUid() + ".jpg";
+                        storageReference = FirebaseStorage.getInstance().getReferenceFromUrl("gs://scorebase-6b4ac.appspot.com/");
+                        profileImageRef = storageReference.child("accounts/images/" + fileName);
+
+                        UploadTask uploadTask = profileImageRef.putBytes(data);
+                        uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                             @Override
-                            public void onSuccess(Uri uri) {
-                                Toast.makeText(getApplicationContext(), "이미지 다운로드에 성공하였습니다.", Toast.LENGTH_SHORT).show();
+                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                Toast.makeText(getApplicationContext(), "이미지 업로드에 성공하였습니다.", Toast.LENGTH_SHORT).show();
 
-
-                                user = FirebaseAuth.getInstance().getCurrentUser();
-
-                                // Save User Display Name
-                                UserProfileChangeRequest userProfileChangeRequest = new UserProfileChangeRequest.Builder()
-                                        .setDisplayName(name)
-                                        .setPhotoUri(uri)
-                                        .build();
-                                user.updateProfile(userProfileChangeRequest).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                profileImageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                                     @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
-                                        if(task.isSuccessful()){
-                                            Log.d(TAG, "onComplete: " + "isSuccessful");
-                                        }else{
-                                            Log.d(TAG, "onComplete: " + "isNotSuccessful");
-                                        }
+                                    public void onSuccess(Uri uri) {
+                                        Toast.makeText(getApplicationContext(), "이미지 다운로드에 성공하였습니다.", Toast.LENGTH_SHORT).show();
+
+                                        userData = new Account(createdAt, name, user.getEmail(), gender, introduction, uri, "password", user.getUid());
+                                        databaseReference.child("accounts").child(user.getUid()).setValue(userData);
+                                        finish();
+                                    }
+                                }).addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Toast.makeText(getApplicationContext(), "이미지 다운로드에 실패하였습니다.", Toast.LENGTH_SHORT).show();
                                     }
                                 });
-
-                                // Save Data to Database
-                                userData = new Account(createdAt, name, user.getEmail(), gender, introduction, uri, "password", user.getUid());
-                                databaseReference.child("accounts").child(user.getUid()).setValue(userData);
-                                progressBar.setVisibility(View.INVISIBLE);
-                                finish();
                             }
                         }).addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception e) {
-                                Toast.makeText(getApplicationContext(), "이미지 다운로드에 실패하였습니다.", Toast.LENGTH_SHORT).show();
-                                progressBar.setVisibility(View.INVISIBLE);
-                                return;
+                                Toast.makeText(getApplicationContext(), "이미지 업로드에 실패하였습니다.", Toast.LENGTH_SHORT).show();
                             }
                         });
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(getApplicationContext(), "회원가입에 실패하셨습니다.", Toast.LENGTH_SHORT).show();
                     }
                 });
             }
@@ -208,23 +190,20 @@ public class SignUpDetailActivity extends AppCompatActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        // Request to gallery
         if (requestCode == PICK_FROM_GALLERY) {
             if (resultCode == Activity.RESULT_OK) {
                 try {
-                    Bitmap bitmap = null;
-                    bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), data.getData());
+                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), data.getData());
 
                     int height = bitmap.getHeight();
                     int width = bitmap.getWidth();
 
-                    // Compress Bitmap
                     bitmap = Bitmap.createScaledBitmap(bitmap, 640, height / (width / 640), true);
 
                     imageView.setImageBitmap(bitmap);
                 } catch (IOException e) {
                     e.printStackTrace();
-                } catch (Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }

@@ -1,34 +1,35 @@
-package com.scorebase.scorebase;
+package com.scorebase.scorebase.Main.Fragment;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.scorebase.scorebase.DataFormat.Account;
+import com.scorebase.scorebase.Main.MainActivity;
+import com.scorebase.scorebase.R;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
@@ -41,19 +42,24 @@ import de.hdodenhof.circleimageview.CircleImageView;
  */
 public class MyInformationFragment extends Fragment {
 
-    // Views
+    // Const
+    public final static int PICK_FROM_GALLERY = 1001;
+
+    // View
     private TextView nameText;
-    private Button uploadImage;
+    private Button btnUploadImage;
     private CircleImageView profileImage;
 
-    // Firebase
+    // FireBase
     private FirebaseAuth auth;
     private FirebaseUser user;
     private StorageReference storageReference;
     private UploadTask uploadTask;
+    private FirebaseDatabase firebaseDatabase;
+    private DatabaseReference databaseReference;
 
-    // Gallery Request Code
-    public final static int PICK_FROM_GALLERY = 1001;
+    // Data
+    private final String[] name = new String[1];
 
     public MyInformationFragment() {
 
@@ -72,21 +78,41 @@ public class MyInformationFragment extends Fragment {
         // View Reference
         profileImage = (CircleImageView) view.findViewById(R.id.profile_image);
         nameText = (TextView) view.findViewById(R.id.text_view_name);
-        uploadImage = (Button) view.findViewById(R.id.button_upload_image);
+        btnUploadImage = (Button) view.findViewById(R.id.button_upload_image);
 
-        // Firebase Reference
+        // FireBase Reference
         auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        databaseReference = firebaseDatabase.getReference();
 
-        // Set Profile Image
+        // View Set
         if(((MainActivity)getActivity()).getImageBitmap()==null){
             profileImage.setImageResource(R.drawable.ic_clear_black_48dp);
         }else{
             profileImage.setImageBitmap(((MainActivity)getActivity()).getImageBitmap());
         }
+        databaseReference.child("accounts").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for(DataSnapshot child : dataSnapshot.getChildren()){
+                    Account account = child.getValue(Account.class);
+                    if(account.getUid().equals(user.getUid())){
+                        name[0] = account.getDisplayName();
+                        break;
+                    }
+                }
+            }
 
-        // Go to Gallery
-        uploadImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+        nameText.setText(name[0]);
+
+        // View Event
+        btnUploadImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent();
@@ -95,17 +121,12 @@ public class MyInformationFragment extends Fragment {
                 startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_FROM_GALLERY);
             }
         });
-
-        // Set View
-        nameText.setText(user.getEmail());
-
         return view;
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        // Request to gallery
         if (requestCode == PICK_FROM_GALLERY) {
             if (resultCode == Activity.RESULT_OK) {
                 try {
@@ -114,7 +135,6 @@ public class MyInformationFragment extends Fragment {
                     int height = bitmap.getHeight();
                     int width = bitmap.getWidth();
 
-                    // Compress Bitmap
                     bitmap = Bitmap.createScaledBitmap(bitmap, 640, height / (width / 640), true);
 
                     ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();

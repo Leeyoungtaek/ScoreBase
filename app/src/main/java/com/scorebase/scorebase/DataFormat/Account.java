@@ -1,4 +1,4 @@
-package com.scorebase.scorebase;
+package com.scorebase.scorebase.DataFormat;
 
 import android.net.Uri;
 

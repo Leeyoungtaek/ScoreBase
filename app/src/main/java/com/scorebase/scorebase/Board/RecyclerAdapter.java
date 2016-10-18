@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.scorebase.scorebase.Board.Listener.GamesBoardListener;
 import com.scorebase.scorebase.R;
 
 import java.util.List;
@@ -22,25 +23,21 @@ import java.util.List;
  * Created by DSM_055 on 2016-07-21.
  */
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> {
-    // context, item 리스트, 리스너를 연결해줄 GamesBoard
     private Context context;
     private List<GamesItem> items;
     private GamesBoard gamesBoard;
 
-    // 생성자
     public RecyclerAdapter(Context context, List<GamesItem> items) {
         this.context = context;
         this.items = items;
     }
 
-    // 아이템들을 넣을 뷰홀더를 만듭니다.
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.games_card, parent, false);
         return new ViewHolder(v);
     }
 
-    // item들을 set해줍니다.
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
@@ -52,20 +49,18 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
             @Override
             public void onDownScrollEvent() {
                 Intent intent = new Intent(context, ScoreBoardActivity.class);
+                intent.putExtra("sport", item.getTitle());
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                Toast.makeText(context,item.getTitle(), Toast.LENGTH_SHORT).show();
                 context.startActivity(intent);
             }
         });
     }
 
-    // 아이템 리스트 사이즈 반환
     @Override
     public int getItemCount() {
         return this.items.size();
     }
 
-    // 재활용 View에 대한 모든 서브 뷰를 보유
     public class ViewHolder extends RecyclerView.ViewHolder {
         private ImageView image;
         private TextView title;
